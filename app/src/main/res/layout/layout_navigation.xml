@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_navigation1_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/main_color"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/x15">
+
+        <ImageView
+            android:id="@+id/iv_navigation1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:padding="@dimen/x15"
+            android:src="@mipmap/ic_navigation" />
+
+        <TextView
+            style="@style/text_white"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="设备列表" />
+
+        <ImageView
+            android:id="@+id/iv_navigation2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/x15"
+            android:src="@mipmap/ic_navigation" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/buttom1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="123"
+        android:visibility="gone" />
+
+    <ExpandableListView
+        android:id="@+id/expendlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_navigation1_bottom"
+        android:layout_below="@+id/rl_navigation1_top" />
+
+    <LinearLayout
+        android:id="@+id/ll_navigation1_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/main_color"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/butManage"
+            style="@style/text_white2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:drawableTop="@mipmap/ic_launcher"
+            android:text="管理" />
+
+        <Button
+            android:id="@+id/butCurrency"
+            style="@style/text_white2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:drawableTop="@mipmap/ic_launcher"
+            android:text="通用" />
+
+        <Button
+            android:id="@+id/butOut"
+            style="@style/text_white2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:drawableTop="@mipmap/ic_launcher"
+            android:text="退出" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

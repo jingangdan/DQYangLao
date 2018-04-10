@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="main_color">#FF3E3F</color>
+    <color name="white">#ffffff</color>
+    <color name="grad1">#9D9C9D</color>
+    <color name="grad2">#DEDEDE</color>
+    <color name="touming">#00000000</color>
+
+</resources>
