@@ -8,12 +8,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -21,10 +23,12 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.dq.yanglao.R;
@@ -33,6 +37,7 @@ import com.dq.yanglao.base.CheckPermissionsActivity;
 import com.dq.yanglao.utils.AnimUtils;
 import com.dq.yanglao.utils.DensityUtil;
 import com.dq.yanglao.utils.ToastUtils;
+import com.dq.yanglao.view.CircleImageLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +46,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends CheckPermissionsActivity implements LocationSource, AMapLocationListener {
+public class MainActivity extends CheckPermissionsActivity implements
+        LocationSource,
+        AMapLocationListener,
+        AMap.OnMarkerClickListener,
+        AMap.InfoWindowAdapter,
+        AMap.OnMapClickListener {
+
     @Bind(R.id.drawerLayout)
     DrawerLayout drawerLayout;
     @Bind(R.id.iv_navigation1)
@@ -66,6 +77,7 @@ public class MainActivity extends CheckPermissionsActivity implements LocationSo
     MapView mapView;
     private AMap aMap;
     private MyLocationStyle myLocationStyle;
+    private Marker curShowWindowMarker;
 
     //定位需要的数据
     LocationSource.OnLocationChangedListener mListener;
@@ -79,8 +91,6 @@ public class MainActivity extends CheckPermissionsActivity implements LocationSo
     private List<List<String>> mItemNameList = null;
     // 适配器
     private MyExpandableListViewAdapter mAdapter = null;
-
-    private View views;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,24 +107,16 @@ public class MainActivity extends CheckPermissionsActivity implements LocationSo
         }
         setMyLocationStyle();
 
-        aMap.setOnMarkerClickListener(new AMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-//                linJingang.setVisibility(View.VISIBLE);
-//                AnimUtils.startScaleInAnim(MainActivity.this, linJingang);
-
-                ToastUtils.getInstance(MainActivity.this).showMessage("啊  我被点了！！！");
-                return false;
-            }
-        });
-
-
         aMap.setOnMyLocationChangeListener(new AMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
                 //从location对象中获取经纬度信息，地址描述信息，建议拿到位置之后调用逆地理编码接口获取
             }
         });
+
+        aMap.setOnMarkerClickListener(this);
+        aMap.setInfoWindowAdapter(this);
+        aMap.setOnMapClickListener(this);
 
         mExpandableListView.setGroupIndicator(null);
 
@@ -320,7 +322,7 @@ public class MainActivity extends CheckPermissionsActivity implements LocationSo
 
         myLocationStyle = new MyLocationStyle();//初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher));
-        myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
+        myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔*****************************，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
         aMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
         //aMap.getUiSettings().setMyLocationButtonEnabled(true);设置默认定位按钮是否显示，非必需设置。
         aMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
@@ -367,6 +369,57 @@ public class MainActivity extends CheckPermissionsActivity implements LocationSo
 //        MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE;//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（默认1秒1次定位）默认执行此种模式。
 
         //MyLocationStyle interval(long interval);//设置定位频次方法，单位：毫秒，默认值：1000毫秒，如果传小于1000的任何值将按照1000计算。该方法只会作用在会执行连续定位的工作模式上。
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        //点击其它地方隐藏infoWindow
+        if (curShowWindowMarker != null) {
+            curShowWindowMarker.hideInfoWindow();
+        }
+    }
+
+    /* marker点击事件 */
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        // TODO Auto-generated method stub
+        curShowWindowMarker = marker;
+        if (curShowWindowMarker.isInfoWindowShown()) {
+            curShowWindowMarker.hideInfoWindow();
+        } else {
+            curShowWindowMarker.showInfoWindow();
+        }
+        return true;
+    }
+
+    /* 自定义窗体 */
+    @Override
+    public View getInfoWindow(final Marker marker) {
+        // TODO Auto-generated method stub
+        View infoWindow = getLayoutInflater().inflate(R.layout.infowindow, null);//display为自定义layout文件
+        TextView name = (TextView) infoWindow.findViewById(R.id.name);
+        name.setText("设备名称:" + marker.getTitle());
+        LatLng l = marker.getPosition();// 获取标签的位置
+//        TextView dis = (TextView) infoWindow.findViewById(R.id.dis);
+//        float distance = AMapUtils.calculateLineDistance(l, la) / 1000;// 调用函数计算距离
+//        description = "距您所在位置：" + distance + "KM" + "\n";
+//        dis.setText(description);
+        TextView des = (TextView) infoWindow.findViewById(R.id.des);
+        des.setText("简介：" + marker.getSnippet());
+        // 此处省去长篇代码
+
+        CircleImageLayout circleImageLayout = ( CircleImageLayout)infoWindow.findViewById(R.id.circleImageLayout);
+
+        circleImageLayout.setRadius(30);
+        circleImageLayout.initDraw();
+        circleImageLayout.init(3, 20);
+
+        return infoWindow;
+    }
+
+    @Override
+    public View getInfoContents(Marker marker) {
+        return null;
     }
 
     @Override
@@ -450,4 +503,5 @@ public class MainActivity extends CheckPermissionsActivity implements LocationSo
         }
         mlocationClient = null;
     }
+
 }
