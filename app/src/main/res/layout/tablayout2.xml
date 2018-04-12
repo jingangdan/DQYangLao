@@ -19,10 +19,9 @@
         android:layout_alignParentBottom="true"
         android:background="@color/grad2"
         app:tabIndicatorColor="@color/touming"
-        app:tabSelectedTextColor="@color/main_color">
-        <!--app:tabIndicatorColor="@color/tv_color001"
-        app:tabSelectedTextColor="@color/tv_color001"-->
+        app:tabSelectedTextColor="@color/main_color" />
+    <!--app:tabIndicatorColor="@color/tv_color001"
+    app:tabSelectedTextColor="@color/tv_color001"-->
 
-    </android.support.design.widget.TabLayout>
 
 </RelativeLayout>

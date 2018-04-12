@@ -37,7 +37,7 @@ public class InformationActivity extends MyBaseActivity implements ViewPager.OnP
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setBaseContentView(R.layout.tablayout);
+        setBaseContentView(R.layout.tablayout2);
         ButterKnife.bind(this);
         setTvTitle(titles[noScrollViewPager.getChildCount()]);
         setIvBack();

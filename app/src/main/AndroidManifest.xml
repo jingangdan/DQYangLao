@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dq.yanglao">
 
-    //地图SDK（包含其搜索功能）需要的基础权限
+    <!--地图SDK（包含其搜索功能）需要的基础权限-->
 
     <!--允许程序打开网络套接字-->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,12 +24,12 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <!--用于访问GPS定位-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!--用于申请调用A-GPS模块-->
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <!--用于申请获取蓝牙信息进行室内定位-->
-    <uses-permission android:name="android.permission.BLUETOOTH"></uses-permission>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"></uses-permission>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:name=".base.MyApplacation"
@@ -48,13 +48,14 @@
             android:name="design_height"
             android:value="1334" />
 
-        <meta-data android:name="com.amap.api.v2.apikey" android:value="1abbe235e7700886cb5947d93513cca9">
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="1abbe235e7700886cb5947d93513cca9">
             //开发者申请的key
         </meta-data>
 
         <!-- 定位需要的服务 -->
-        <service android:name="com.amap.api.location.APSService">
-        </service>
+        <service android:name="com.amap.api.location.APSService"></service>
 
         <!--登录-->
         <activity
