@@ -1,5 +1,6 @@
 package com.dq.yanglao.ui;
 
+import android.annotation.SuppressLint;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.dq.yanglao.Interface.OnItemClickListener;
+import com.dq.yanglao.Interface.OnClickListeners;
+import com.dq.yanglao.Interface.OnItemClickListenerHeather;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyBaseActivity;
 import com.dq.yanglao.fragment.FindFragment;
@@ -81,7 +83,8 @@ public class MainActivity extends MyBaseActivity {
 
     private int index = 0;//点击的页卡索引
     private int currentTabIndex = 0;//当前的页卡索引
-    FragmentTransaction fm;
+
+    private int pages = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,46 +104,50 @@ public class MainActivity extends MyBaseActivity {
         locationFragment = new LocationFragment();
         findFragment = new FindFragment();
         meFragment = new MeFragment();
+        meFragment = new MeFragment();
         fragments = new Fragment[]{homeFragment, healthyFragment, locationFragment, findFragment, meFragment};
         setBottomColor();
         getSupportFragmentManager().beginTransaction().add(R.id.main_fl_content, fragments[index]).show(fragments[index]).commit();
     }
 
+
+    @SuppressLint("NewApi")
     @OnClick({R.id.main_ll_1, R.id.main_ll_2, R.id.main_ll_3, R.id.main_ll_4, R.id.main_ll_5})
-    public void onViewClicked(View view) {
+    public void onViewClick(View view) {
         switch (view.getId()) {
             case R.id.main_ll_1:
                 //首页
                 index = 0;
-                fragmentControl();
+                fragmentControl(pages);
                 break;
             case R.id.main_ll_2:
                 //健康
                 index = 1;
-                fragmentControl();
+                fragmentControl(pages);
                 break;
             case R.id.main_ll_3:
                 //定位
                 index = 2;
-                fragmentControl();
+                fragmentControl(pages);
                 break;
             case R.id.main_ll_4:
-                //发现（论坛）
+                //论坛
                 index = 3;
-                fragmentControl();
+                fragmentControl(pages);
                 break;
             case R.id.main_ll_5:
                 //我的
 //                if (!TextUtils.isEmpty(SPUtils.getPreference(MainActivity.this, "userid"))) {
 //                    //已登录
-//                    index = 4;
+//                    index = 3;
 //                    fragmentControl();
 //                } else {
 //                    //未登录
 //                    goToActivity(LoginActivity.class);
 //                }
+
                 index = 4;
-                fragmentControl();
+                fragmentControl(pages);
                 break;
         }
     }
@@ -148,17 +155,20 @@ public class MainActivity extends MyBaseActivity {
     /**
      * 控制fragment的变化
      */
-    public void fragmentControl() {
+    public void fragmentControl(int page) {
         if (currentTabIndex != index) {
             removeBottomColor();
             setBottomColor();
 
-            fm = getSupportFragmentManager().beginTransaction();
-            fm.hide(fragments[currentTabIndex]);
+            FragmentTransaction trx = getSupportFragmentManager().beginTransaction();
+            trx.hide(fragments[currentTabIndex]);
             if (!fragments[index].isAdded()) {
-                fm.add(R.id.main_fl_content, fragments[index]);
+                trx.add(R.id.main_fl_content, fragments[index]);
             }
-            fm.show(fragments[index]).commit();
+            trx.show(fragments[index]).commit();
+
+            healthyFragment.setTabPage(page);
+
             currentTabIndex = index;
         }
     }
@@ -221,11 +231,21 @@ public class MainActivity extends MyBaseActivity {
 
     /*跳转到fragment*/
     public void setFragment() {
-        homeFragment.setOnItemClickListener(new OnItemClickListener() {
+        homeFragment.setOnItemClickListener(new OnItemClickListenerHeather() {
             @Override
-            public void onItemClick(View view, int position) {
+            public void onItemClick(View view, int position, int page) {
+
                 index = position;
-                fragmentControl();
+                pages = page;
+                fragmentControl(pages);
+            }
+        });
+
+        healthyFragment.setOnClickListeners(new OnClickListeners() {
+            @Override
+            public void onItemClick(int position) {
+                pages = position;
+                fragmentControl(pages);
             }
         });
     }

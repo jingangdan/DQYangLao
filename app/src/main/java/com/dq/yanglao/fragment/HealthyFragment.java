@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dq.yanglao.Interface.OnClickListeners;
 import com.dq.yanglao.R;
 import com.dq.yanglao.adapter.SimpleFragmentPagerAdapter;
 import com.dq.yanglao.base.MyBaseFragment;
@@ -35,13 +36,24 @@ public class HealthyFragment extends MyBaseFragment implements ViewPager.OnPageC
     private List<Fragment> fragments = new ArrayList<>();
 
     private SimpleFragmentPagerAdapter sfpAdapter;
+    private int page = 0;
+
+    private OnClickListeners onClickListeners;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tablayout1, null);
         ButterKnife.bind(this, view);
+        setFragment(page);
+        return view;
+    }
 
+    public void setOnClickListeners(OnClickListeners onClickListeners) {
+        this.onClickListeners = onClickListeners;
+    }
+
+    public void setFragment(int page) {
         fragments.add(FMStep.newInstance());
         fragments.add(FMStep.newInstance());
         fragments.add(FMStep.newInstance());
@@ -49,14 +61,13 @@ public class HealthyFragment extends MyBaseFragment implements ViewPager.OnPageC
         sfpAdapter = new SimpleFragmentPagerAdapter(getActivity().getSupportFragmentManager(), getActivity(), fragments, titles);
         noScrollViewPager1.setAdapter(sfpAdapter);
 
-        // noScrollViewPager.setCurrentItem(page);
+        noScrollViewPager1.setCurrentItem(page);
         noScrollViewPager1.setOffscreenPageLimit(titles.length);
 
         noScrollViewPager1.setOnPageChangeListener(this);
         tabLayout1.setupWithViewPager(noScrollViewPager1);
-
-        return view;
     }
+
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -65,11 +76,22 @@ public class HealthyFragment extends MyBaseFragment implements ViewPager.OnPageC
 
     @Override
     public void onPageSelected(int position) {
-
+        page = position;
+        if (onClickListeners != null) {
+            onClickListeners.onItemClick(position);
+        }
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    public void setTabPage(int arg) {
+        page = arg;
+        if (sfpAdapter != null) {
+
+            noScrollViewPager1.setCurrentItem(page);
+        }
     }
 }

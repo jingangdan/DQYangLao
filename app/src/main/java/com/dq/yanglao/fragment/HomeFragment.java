@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.dq.yanglao.Interface.OnClickListeners;
 import com.dq.yanglao.Interface.OnItemClickListener;
+import com.dq.yanglao.Interface.OnItemClickListenerHeather;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.BaseRecyclerViewHolder;
 import com.dq.yanglao.base.MyBaseFragment;
@@ -44,7 +45,7 @@ public class HomeFragment extends MyBaseFragment {
     @Bind(R.id.rvHomeHealthy)
     RecyclerView rvHomeHealthy;
 
-    private OnItemClickListener onItemClickListener;//2、定义接口成员变量
+    private OnItemClickListenerHeather onItemClickListenerHeather;//2、定义接口成员变量
     private RVAdapter1 rVAdapter1;
     private RVAdapter2 rVAdapter2;
 
@@ -60,8 +61,8 @@ public class HomeFragment extends MyBaseFragment {
     }
 
     //定义接口变量的set方法
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+    public void setOnItemClickListener(OnItemClickListenerHeather onItemClickListenerHeather) {
+        this.onItemClickListenerHeather = onItemClickListenerHeather;
     }
 
     private void initData() {
@@ -123,20 +124,20 @@ public class HomeFragment extends MyBaseFragment {
                 switch (position) {
                     case 0:
                         //计步
-                        if (onItemClickListener != null) {
-                            onItemClickListener.onItemClick(view, 1);
+                        if (onItemClickListenerHeather != null) {
+                            onItemClickListenerHeather.onItemClick(view, 1, 0);
                         }
                         break;
                     case 1:
                         //心率
-                        if (onItemClickListener != null) {
-                            onItemClickListener.onItemClick(view, 1);
+                        if (onItemClickListenerHeather != null) {
+                            onItemClickListenerHeather.onItemClick(view, 1, 1);
                         }
                         break;
                     case 2:
                         //睡眠
-                        if (onItemClickListener != null) {
-                            onItemClickListener.onItemClick(view, 1);
+                        if (onItemClickListenerHeather != null) {
+                            onItemClickListenerHeather.onItemClick(view, 1, 2);
                         }
                         break;
                 }
@@ -149,8 +150,8 @@ public class HomeFragment extends MyBaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_home_location:
-                if (onItemClickListener != null) {
-                    onItemClickListener.onItemClick(view, 2);
+                if (onItemClickListenerHeather != null) {
+                    onItemClickListenerHeather.onItemClick(view, 2, 0);
                 }
                 break;
         }
