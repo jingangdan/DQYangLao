@@ -12,9 +12,8 @@
         android:orientation="vertical">
 
         <TextView
-            style="@style/text_grad"
+            style="@style/text_color2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
             android:text="回放时段" />
@@ -22,11 +21,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
-            android:background="#EEEEEE"></View>
+            android:background="@color/view_line"></View>
 
         <Button
             android:id="@+id/butToday"
-            style="@style/text_red1"
+            style="@style/text_color4"
             android:layout_width="match_parent"
             android:background="@null"
             android:text="今天" />
@@ -34,11 +33,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
-            android:background="#EEEEEE"></View>
+            android:background="@color/view_line"></View>
 
         <Button
             android:id="@+id/butYesterday"
-            style="@style/text_red1"
+            style="@style/text_color4"
             android:layout_width="match_parent"
             android:background="@null"
             android:text="昨天" />
@@ -46,11 +45,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
-            android:background="#EEEEEE"></View>
+            android:background="@color/view_line"></View>
 
         <Button
             android:id="@+id/butYesterday2"
-            style="@style/text_red1"
+            style="@style/text_color4"
             android:layout_width="match_parent"
             android:background="@null"
             android:text="前天" />
@@ -58,11 +57,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
-            android:background="#EEEEEE"></View>
+            android:background="@color/view_line"></View>
 
         <Button
             android:id="@+id/butCustom"
-            style="@style/text_red1"
+            style="@style/text_color4"
             android:layout_width="match_parent"
             android:background="@null"
             android:text="自定义" />
@@ -70,9 +69,14 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:background="@color/view_line"></View>
+
     <Button
         android:id="@+id/butHpCancel"
-        style="@style/text_red1"
+        style="@style/text_color4"
         android:layout_width="match_parent"
         android:layout_marginTop="10dp"
         android:background="@drawable/kuang_login_res"

@@ -1,6 +1,7 @@
 package com.dq.yanglao.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,6 +21,9 @@ import com.dq.yanglao.Interface.OnItemClickListenerHeather;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.BaseRecyclerViewHolder;
 import com.dq.yanglao.base.MyBaseFragment;
+import com.dq.yanglao.ui.ChatingActivity;
+import com.dq.yanglao.ui.EquipmentActivity;
+import com.dq.yanglao.ui.MainActivity;
 import com.dq.yanglao.view.rollpagerview.ImageLoopAdapter;
 import com.dq.yanglao.view.rollpagerview.RollPagerView;
 
@@ -44,6 +48,8 @@ public class HomeFragment extends MyBaseFragment {
     LinearLayout llHomeLocation;
     @Bind(R.id.rvHomeHealthy)
     RecyclerView rvHomeHealthy;
+    @Bind(R.id.ivHomeHeader)
+    ImageView ivHomeHeader;
 
     private OnItemClickListenerHeather onItemClickListenerHeather;//2、定义接口成员变量
     private RVAdapter1 rVAdapter1;
@@ -83,10 +89,10 @@ public class HomeFragment extends MyBaseFragment {
 
         //上方四个menu
         rVAdapter1 = new RVAdapter1(new ArrayList<Integer>() {{
-            add(R.mipmap.ic_launcher);
-            add(R.mipmap.ic_launcher);
-            add(R.mipmap.ic_launcher);
-            add(R.mipmap.ic_launcher);
+            add(R.mipmap.ic_home_menu001);
+            add(R.mipmap.ic_home_menu002);
+            add(R.mipmap.ic_home_menu003);
+            add(R.mipmap.ic_home_menu004);
         }}, getActivity(), 0);
         rvHomeMenu.setLayoutManager(new GridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false));
         rvHomeMenu.setAdapter(rVAdapter1);
@@ -96,6 +102,7 @@ public class HomeFragment extends MyBaseFragment {
                 switch (position) {
                     case 0:
                         //微聊
+                        startActivity(new Intent(getActivity(), ChatingActivity.class));
                         break;
                     case 1:
                         //通话
@@ -112,9 +119,9 @@ public class HomeFragment extends MyBaseFragment {
 
         //下方三个 计步 心率 睡眠
         rVAdapter2 = new RVAdapter2(new ArrayList<Integer>() {{
-            add(R.mipmap.ic_launcher);
-            add(R.mipmap.ic_launcher);
-            add(R.mipmap.ic_launcher);
+            add(R.mipmap.ic_home_healthy001);
+            add(R.mipmap.ic_home_healthy002);
+            add(R.mipmap.ic_home_healthy003);
         }}, getActivity(), 0);
         rvHomeHealthy.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvHomeHealthy.setAdapter(rVAdapter2);
@@ -146,9 +153,13 @@ public class HomeFragment extends MyBaseFragment {
 
     }
 
-    @OnClick(R.id.ll_home_location)
+    @OnClick({R.id.ll_home_location, R.id.ivHomeHeader})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.ivHomeHeader:
+                //
+                startActivity(new Intent(getActivity(), EquipmentActivity.class));
+                break;
             case R.id.ll_home_location:
                 if (onItemClickListenerHeather != null) {
                     onItemClickListenerHeather.onItemClick(view, 2, 0);
@@ -225,7 +236,7 @@ public class HomeFragment extends MyBaseFragment {
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            MyViewHolder vh = new MyViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_hone_menu, parent, false));
+            MyViewHolder vh = new MyViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_hone_menu2, parent, false));
             return vh;
         }
 
@@ -241,7 +252,6 @@ public class HomeFragment extends MyBaseFragment {
                 });
             }
 
-            holder.textView.setVisibility(View.VISIBLE);
             holder.img.setImageResource(list.get(position));
         }
 
@@ -256,8 +266,8 @@ public class HomeFragment extends MyBaseFragment {
 
             public MyViewHolder(View view) {
                 super(view);
-                img = (ImageView) view.findViewById(R.id.item_iv_menu);
-                textView = (TextView) view.findViewById(R.id.item_tv_menu);
+                img = (ImageView) view.findViewById(R.id.item_iv_menu2);
+                textView = (TextView) view.findViewById(R.id.item_tv_menu2);
             }
         }
     }

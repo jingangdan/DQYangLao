@@ -33,6 +33,8 @@ import com.dq.yanglao.R;
 import com.dq.yanglao.adapter.MyExpandableListViewAdapter;
 import com.dq.yanglao.base.MyBaseFragment;
 import com.dq.yanglao.ui.CurrencyActivity;
+import com.dq.yanglao.ui.DistrictActivity;
+import com.dq.yanglao.ui.DistrictActivity2;
 import com.dq.yanglao.ui.InformationActivity;
 import com.dq.yanglao.utils.DensityUtil;
 import com.dq.yanglao.utils.ToastUtils;
@@ -54,7 +56,7 @@ public class LocationFragment extends MyBaseFragment implements
         AMapLocationListener,
         AMap.OnMarkerClickListener,
         AMap.InfoWindowAdapter,
-        AMap.OnMapClickListener{
+        AMap.OnMapClickListener {
 
     @Bind(R.id.drawerLayout)
     DrawerLayout drawerLayout;
@@ -72,6 +74,8 @@ public class LocationFragment extends MyBaseFragment implements
     ImageView ivMsg;
     @Bind(R.id.ivFootprint)
     ImageView ivFootprint;
+    @Bind(R.id.ivDostrict)
+    ImageView ivDostrict;
 
     @Bind(R.id.mapView)
     MapView mapView;
@@ -91,6 +95,7 @@ public class LocationFragment extends MyBaseFragment implements
     private List<List<String>> mItemNameList = null;
     // 适配器
     private MyExpandableListViewAdapter mAdapter = null;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -99,29 +104,29 @@ public class LocationFragment extends MyBaseFragment implements
 
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mapView.onCreate(savedInstanceState);
-
-        //初始化地图控制器对象
-        if (aMap == null) {
-            aMap = mapView.getMap();
-        }
         setMyLocationStyle();
 
-        aMap.setOnMyLocationChangeListener(new AMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                //从location对象中获取经纬度信息，地址描述信息，建议拿到位置之后调用逆地理编码接口获取
-            }
-        });
+//        aMap.setOnMyLocationChangeListener(new AMap.OnMyLocationChangeListener() {
+//            @Override
+//            public void onMyLocationChange(Location location) {
+//                //从location对象中获取经纬度信息，地址描述信息，建议拿到位置之后调用逆地理编码接口获取
+//            }
+//        });
 
         aMap.setOnMarkerClickListener(this);
         aMap.setInfoWindowAdapter(this);
         aMap.setOnMapClickListener(this);
 
-        mExpandableListView.setGroupIndicator(null);
-
         // 初始化数据
         initData();
+        setExpandableListView();
+        mExpandableListView.setGroupIndicator(null);
 
+        return view;
+    }
+
+    /**/
+    public void setExpandableListView() {
         // 为ExpandableListView设置Adapter
         mAdapter = new MyExpandableListViewAdapter(getActivity(), mGroupNameList, mItemNameList);
         mExpandableListView.setAdapter(mAdapter);
@@ -151,10 +156,9 @@ public class LocationFragment extends MyBaseFragment implements
             }
         });
 
-        return view;
     }
 
-    @OnClick({R.id.iv_navigation1, R.id.iv_navigation2, R.id.ivMsg, R.id.ivFootprint})
+    @OnClick({R.id.iv_navigation1, R.id.iv_navigation2, R.id.ivMsg, R.id.ivDostrict, R.id.ivFootprint})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_navigation1:
@@ -167,6 +171,9 @@ public class LocationFragment extends MyBaseFragment implements
             case R.id.ivMsg:
                 //消息
                 startActivity(new Intent(getActivity(), InformationActivity.class));
+                break;
+            case R.id.ivDostrict:
+                startActivity(new Intent(getActivity(), DistrictActivity2.class));
                 break;
             case R.id.ivFootprint:
                 final Dialog bottomDialog = new Dialog(getActivity(), R.style.BottomDialog);
@@ -310,10 +317,19 @@ public class LocationFragment extends MyBaseFragment implements
      * 实现定位蓝点
      */
     public void setMyLocationStyle() {
-        //设置地图的放缩级别
-        aMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+        //初始化地图控制器对象
+        if (aMap == null) {
+            aMap = mapView.getMap();
+        }
+
         // 设置定位监听
         aMap.setLocationSource(this);
+        //设置地图的放缩级别
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+
+        aMap.getUiSettings().setLogoBottomMargin(-50);//取消高德地图logo
+        aMap.getUiSettings().setZoomControlsEnabled(false);//控制缩放控件的显示和隐藏。
+
         // 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         aMap.setMyLocationEnabled(true);
         // 设置定位的类型为定位模式，有定位、跟随或地图根据面向方向旋转几种
@@ -381,7 +397,6 @@ public class LocationFragment extends MyBaseFragment implements
     /* marker点击事件 */
     @Override
     public boolean onMarkerClick(Marker marker) {
-        // TODO Auto-generated method stub
         curShowWindowMarker = marker;
         if (curShowWindowMarker.isInfoWindowShown()) {
             curShowWindowMarker.hideInfoWindow();
@@ -394,7 +409,6 @@ public class LocationFragment extends MyBaseFragment implements
     /* 自定义窗体 */
     @Override
     public View getInfoWindow(final Marker marker) {
-        // TODO Auto-generated method stub
         View infoWindow = getActivity().getLayoutInflater().inflate(R.layout.infowindow, null);//display为自定义layout文件
         TextView name = (TextView) infoWindow.findViewById(R.id.name);
         name.setText("设备名称:" + marker.getTitle());

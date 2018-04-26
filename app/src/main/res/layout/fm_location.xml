@@ -17,8 +17,7 @@
         layout="@layout/layout_navigation"
         android:layout_width="200dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        />
+        android:layout_gravity="start" />
 
     <include
         layout="@layout/layout_navigation"

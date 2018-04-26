@@ -2,12 +2,19 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#FF3E3F</color>
 
     <color name="main_color">#FF3E3F</color>
-    <color name="white">#ffffff</color>
-    <color name="grad1">#9D9C9D</color>
-    <color name="grad2">#DEDEDE</color>
+    <color name="color1">#FFF1DC</color>
     <color name="touming">#00000000</color>
+
+    <color name="text_color1">#141414</color>
+    <color name="text_color2">#565656</color>
+
+    <color name="bg1">#ffffff</color>
+    <color name="bg2">#F1F1F1</color>
+    <color name="bg3">#B8B8B8</color>
+
+    <color name="view_line">#EBEBEB</color>
 
 </resources>

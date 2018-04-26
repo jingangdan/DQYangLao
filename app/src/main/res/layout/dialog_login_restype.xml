@@ -13,9 +13,8 @@
         android:orientation="vertical">
 
         <TextView
-            style="@style/text_grad"
+            style="@style/text_color2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
             android:text="请选择密码类型" />
@@ -27,7 +26,7 @@
 
         <Button
             android:id="@+id/butEmail"
-            style="@style/text_red1"
+            style="@style/text_color4"
             android:layout_width="match_parent"
             android:background="@null"
             android:text="邮箱账号密码" />
@@ -35,11 +34,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
-            android:background="#EEEEEE"></View>
+            android:background="@color/view_line"></View>
 
         <Button
             android:id="@+id/butPhone"
-            style="@style/text_red1"
+            style="@style/text_color4"
             android:layout_width="match_parent"
             android:background="@null"
             android:text="手机账号密码" />
@@ -49,7 +48,7 @@
 
     <Button
         android:id="@+id/butCancel"
-        style="@style/text_red1"
+        style="@style/text_color4"
         android:layout_width="match_parent"
         android:layout_marginTop="10dp"
         android:background="@drawable/kuang_login_res"

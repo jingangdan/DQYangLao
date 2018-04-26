@@ -29,26 +29,27 @@
             android:padding="10dp">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginLeft="10dp"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:src="@mipmap/ic_login_phone" />
 
             <EditText
                 android:id="@+id/etLoginPhone"
-                style="@style/edit_white1"
-                android:layout_width="match_parent"
+                style="@style/edit_color2"
+                android:layout_width="0dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:layout_weight="1"
                 android:hint="请输入手机号"
                 android:inputType="number" />
 
             <ImageView
                 android:id="@+id/ivLoginPhoneClear"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
-                android:src="@mipmap/ic_launcher"
+                android:src="@mipmap/ic_login_clear"
                 android:visibility="invisible" />
 
         </LinearLayout>
@@ -63,33 +64,34 @@
             android:padding="10dp">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginLeft="10dp"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:src="@mipmap/ic_login_pwd" />
 
             <EditText
                 android:id="@+id/etLoginPwd"
-                style="@style/edit_white1"
-                android:layout_width="match_parent"
+                style="@style/edit_color2"
+                android:layout_width="0dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:layout_weight="1"
                 android:hint="请输入登录密码"
                 android:inputType="textPassword" />
 
             <ImageView
                 android:id="@+id/ivLoginPwdEye"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/ic_login_eye" />
 
             <ImageView
                 android:id="@+id/ivLoginPwdClear"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
-                android:src="@mipmap/ic_launcher"
+                android:src="@mipmap/ic_login_clear"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -101,8 +103,8 @@
             android:layout_gravity="bottom"
             android:layout_marginTop="20dp"
             android:background="@drawable/kuang_login_white"
-            android:orientation="horizontal"
             android:text="登录"
+            android:textColor="@color/text_color1"
             android:textSize="16dp" />
 
     </LinearLayout>
@@ -120,12 +122,13 @@
 
             <TextView
                 android:id="@+id/tvRes"
-                style="@style/text_white2"
+                style="@style/text_color3"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="right"
                 android:padding="5dp"
-                android:text="注册" />
+                android:text="注册"
+                android:textSize="14dp" />
 
 
             <LinearLayout
@@ -143,12 +146,19 @@
 
             <TextView
                 android:id="@+id/tvForgetPwd"
-                style="@style/text_white2"
+                style="@style/text_color3"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="left"
                 android:padding="5dp"
-                android:text="忘记密码" />
+                android:text="忘记密码"
+                android:textSize="14dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         </LinearLayout>
 

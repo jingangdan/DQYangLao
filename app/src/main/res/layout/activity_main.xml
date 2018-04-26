@@ -14,39 +14,39 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@+id/main_ll_bottom"
-        android:background="#f0f0f0" />
+        android:background="@color/view_line" />
 
     <LinearLayout
         android:id="@+id/main_ll_bottom"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/x98"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
         android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/main_ll_1"
-            android:layout_width="0px"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <ImageView
                 android:id="@+id/main_iv_1"
-                android:layout_width="@dimen/x44"
-                android:layout_height="@dimen/x44"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_fm_homepage001" />
 
             <TextView
                 android:id="@+id/main_tv_1"
+                style="@style/text_color2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x4"
+                android:layout_marginTop="3dp"
                 android:gravity="center"
                 android:text="首页"
-                android:textColor="@color/grad1"
-                android:textSize="@dimen/tv_24px" />
+                android:textSize="12dp" />
 
         </LinearLayout>
 
@@ -56,23 +56,24 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <ImageView
                 android:id="@+id/main_iv_2"
-                android:layout_width="@dimen/x44"
-                android:layout_height="@dimen/x44"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_fm_healthy001" />
 
             <TextView
                 android:id="@+id/main_tv_2"
+                style="@style/text_color2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x4"
+                android:layout_marginTop="3dp"
                 android:gravity="center"
                 android:text="健康"
-                android:textColor="@color/grad1"
-                android:textSize="@dimen/tv_24px" />
+                android:textSize="12dp" />
 
         </LinearLayout>
 
@@ -82,23 +83,24 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <ImageView
                 android:id="@+id/main_iv_3"
-                android:layout_width="@dimen/x44"
-                android:layout_height="@dimen/x44"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_fm_location001" />
 
             <TextView
                 android:id="@+id/main_tv_3"
+                style="@style/text_color2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x4"
+                android:layout_marginTop="3dp"
                 android:gravity="center"
                 android:text="定位"
-                android:textColor="@color/grad1"
-                android:textSize="@dimen/tv_24px" />
+                android:textSize="12dp" />
 
         </LinearLayout>
 
@@ -109,7 +111,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/main_iv_4"
@@ -124,7 +127,7 @@
                 android:layout_marginTop="@dimen/x4"
                 android:gravity="center"
                 android:text="发现"
-                android:textColor="@color/grad1"
+                android:textColor="@color/text_color2"
                 android:textSize="@dimen/tv_24px" />
 
         </LinearLayout>
@@ -135,7 +138,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <RelativeLayout
                 android:id="@+id/main_rl_5"
@@ -144,9 +148,9 @@
 
                 <ImageView
                     android:id="@+id/main_iv_5"
-                    android:layout_width="@dimen/x44"
-                    android:layout_height="@dimen/x44"
-                    android:src="@mipmap/ic_launcher" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_fm_me001" />
 
                 <ImageView
                     android:id="@+id/main_iv_red_dot"
@@ -160,13 +164,13 @@
 
             <TextView
                 android:id="@+id/main_tv_5"
+                style="@style/text_color2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x4"
+                android:layout_marginTop="3dp"
                 android:gravity="center"
                 android:text="我的"
-                android:textColor="@color/grad1"
-                android:textSize="@dimen/tv_24px" />
+                android:textSize="12dp" />
 
         </LinearLayout>
     </LinearLayout>

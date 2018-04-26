@@ -15,6 +15,16 @@ public class ScreenManagerUtils {
     private static Stack<Activity> activityStack;
     private static ScreenManagerUtils instance;
 
+    public static Activity getmCurrentActivity() {
+        return mCurrentActivity;
+    }
+
+    public static void setmCurrentActivity(Activity mCurrentActivity) {
+        ScreenManagerUtils.mCurrentActivity = mCurrentActivity;
+    }
+
+    private static Activity mCurrentActivity;
+
     private ScreenManagerUtils() {
     }
 

@@ -2,20 +2,17 @@ package com.dq.yanglao.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,8 +20,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dq.yanglao.R;
+import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseActivity;
+import com.dq.yanglao.bean.DeviceGet;
+import com.dq.yanglao.bean.UserInfo1;
+import com.dq.yanglao.bean.UserInfo2;
+import com.dq.yanglao.utils.Base64Utils;
 import com.dq.yanglao.utils.DensityUtil;
+import com.dq.yanglao.utils.GsonUtil;
+import com.dq.yanglao.utils.HttpPath;
+import com.dq.yanglao.utils.HttpxUtils;
+import com.dq.yanglao.utils.RSAUtils;
+import com.dq.yanglao.utils.SPUtils;
+import com.dq.yanglao.utils.ScreenManagerUtils;
+import com.dq.yanglao.view.TcpClient;
+
+import org.xutils.common.Callback;
+
+import java.net.URLEncoder;
+import java.security.PrivateKey;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -59,6 +76,9 @@ public class LoginActivity extends MyBaseActivity {
 
     private LinearLayout parent;
     private Button butEmail, butPhone, butCancel;
+    private String phone, pwd, PATH_RSA;
+
+    private String login_result;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,63 +86,12 @@ public class LoginActivity extends MyBaseActivity {
         setBaseContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        //initWindowss(getResources().getColor(R.color.touming));
-
         initWatcher();
         etLoginPhone.addTextChangedListener(phone_watcher);
         etLoginPwd.addTextChangedListener(pwd_watcher);
 
-        tvRes.setOnClickListener(new OnClickListener());
+//        tvRes.setOnClickListener(new OnClickListener());
 
-    }
-
-    private void initWindowss(int color) {
-        Window window = getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            //设置状态栏颜色
-            window.setStatusBarColor(color);
-            //设置导航栏颜色
-            window.setNavigationBarColor(color);
-            ViewGroup contentView = ((ViewGroup) findViewById(android.R.id.content));
-            View childAt = contentView.getChildAt(0);
-            if (childAt != null) {
-                childAt.setFitsSystemWindows(true);
-            }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            //透明状态栏
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //透明导航栏
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            //设置contentview为fitsSystemWindows
-            ViewGroup contentView = (ViewGroup) findViewById(android.R.id.content);
-            View childAt = contentView.getChildAt(0);
-            if (childAt != null) {
-                childAt.setFitsSystemWindows(true);
-            }
-            //给statusbar着色
-            View view = new View(this);
-            view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight(this)));
-            view.setBackgroundColor(color);
-            contentView.addView(view);
-        }
-    }
-
-    /**
-     * 获取状态栏高度
-     *
-     * @param context context
-     * @return 状态栏高度
-     */
-    private static int getStatusBarHeight(Context context) {
-        // 获得状态栏高度
-        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        return context.getResources().getDimensionPixelSize(resourceId);
     }
 
     @OnClick({R.id.ivLoginPhoneClear, R.id.ivLoginPwdClear, R.id.ivLoginPwdEye, R.id.butLogin, R.id.tvRes, R.id.tvForgetPwd})
@@ -146,13 +115,29 @@ public class LoginActivity extends MyBaseActivity {
                 etLoginPwd.setSelection(etLoginPwd.getText().toString().length());
                 break;
             case R.id.butLogin:
-                startActivity(new Intent(this, MainActivity.class));
-                //this.finish();
+                phone = etLoginPhone.getText().toString().trim();
+                pwd = etLoginPwd.getText().toString().trim();
+
+                if (!TextUtils.isEmpty(phone) && !TextUtils.isEmpty(pwd)) {
+                    PATH_RSA = "phone=" + phone + "&pwd=" + pwd;
+                    try {
+                        PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                        byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                        //login(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+                        login(Base64Utils.encode(encryptByte).toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    showMessage("账号或密码未输入");
+                }
+
                 break;
-//            case R.id.tvRes:
-//                startActivity(new Intent(this, ResActivity.class));
-//                break;
+            case R.id.tvRes:
+                startActivity(new Intent(this, ResActivity.class));
+                break;
             case R.id.tvForgetPwd:
+                startActivity(new Intent(this, ForgetPwdActivity.class));
                 break;
         }
     }
@@ -251,5 +236,115 @@ public class LoginActivity extends MyBaseActivity {
 
         }
     }
+
+
+    /**
+     * 登录
+     *
+     * @param afterencrypt
+     */
+    public void login(String afterencrypt) {
+        System.out.println("登录 = " + HttpPath.USER_LOGIN + "sign=" + afterencrypt);
+        Map<String, Object> map = new HashMap<>();
+        map.put("sign", afterencrypt);
+        HttpxUtils.Post(this,
+                HttpPath.USER_LOGIN,
+                map,
+                new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        System.out.println("登录 = " + result);
+                        login_result = result;
+                        UserInfo1 u1 = GsonUtil.gsonIntance().gsonToBean(result, UserInfo1.class);
+                        if (u1.getStatus() == 1) {
+                            SPUtils.savePreference(LoginActivity.this, "isLogin", "1");//0 未登录  1已登录
+                            SPUtils.savePreference(LoginActivity.this, "uid", u1.getData().getId());
+                            SPUtils.savePreference(LoginActivity.this, "token", u1.getData().getToken());//用户id
+
+                            MyApplacation.exec = Executors.newCachedThreadPool();
+                            MyApplacation.tcpClient = new TcpClient("47.52.199.154", 49152, MyApplacation.context);
+                            MyApplacation.exec.execute(MyApplacation.tcpClient);
+
+                            if (!TextUtils.isEmpty(u1.getData().getId())) {
+                                PATH_RSA = "uid=" + u1.getData().getId() + "&token=" + u1.getData().getToken();
+                                try {
+                                    PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                                    byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                                    getDevice(Base64Utils.encode(encryptByte).toString());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+                        if (!TextUtils.isEmpty(login_result)) {
+                            UserInfo2 u2 = GsonUtil.gsonIntance().gsonToBean(login_result, UserInfo2.class);
+                            if (u2.getStatus() == 0) {
+                                showMessage(u2.getData());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
+    }
+
+    /**
+     * 获取用户绑定设备
+     *
+     * @param afterencrypt
+     */
+    public void getDevice(String afterencrypt) {
+        System.out.println("用户绑定设备 = " + HttpPath.DEVICE_GETDEVICE + "sign=" + afterencrypt);
+        Map<String, Object> map = new HashMap<>();
+        map.put("sign", afterencrypt);
+        HttpxUtils.Post(this,
+                HttpPath.DEVICE_GETDEVICE,
+                map,
+                new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        System.out.println("用户绑定设备 = " + result);
+                        DeviceGet deviceGet = GsonUtil.gsonIntance().gsonToBean(result, DeviceGet.class);
+                        if (deviceGet.getStatus() == 1) {
+                            if (deviceGet.getData().size() > 0) {
+                                SPUtils.savePreference(LoginActivity.this, "isBind", "1");//0 未绑定  1已绑定
+                                SPUtils.savePreference(LoginActivity.this, "deviceid", deviceGet.getData().get(0).getDevice_id());
+                                goToActivity(MainActivity.class);
+                            } else {
+                                goToActivity(NoLoginActivity.class);
+                            }
+                            ScreenManagerUtils.getInstance().removeActivity(LoginActivity.this);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
+    }
+
 
 }

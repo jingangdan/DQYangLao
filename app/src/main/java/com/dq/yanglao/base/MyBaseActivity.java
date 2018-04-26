@@ -1,6 +1,5 @@
 package com.dq.yanglao.base;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -25,6 +24,9 @@ import com.dq.yanglao.utils.ScreenManagerUtils;
 import com.dq.yanglao.utils.ToastUtils;
 import com.zhy.autolayout.AutoLayoutActivity;
 
+import org.xutils.BuildConfig;
+import org.xutils.x;
+
 
 /**
  * @describe：基础Activity
@@ -47,9 +49,14 @@ public abstract class MyBaseActivity extends AutoLayoutActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
+        x.Ext.init(this.getApplication());
+        x.Ext.setDebug(BuildConfig.DEBUG);
+
         initWindows(getResources().getColor(R.color.main_color));
 
         ScreenManagerUtils.getInstance().addActivity(this);
+
+        ScreenManagerUtils.setmCurrentActivity(this);
         initBaseView();
     }
 

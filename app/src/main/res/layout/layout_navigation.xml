@@ -25,7 +25,7 @@
             android:src="@mipmap/ic_navigation" />
 
         <TextView
-            style="@style/text_white"
+            style="@style/text_color3"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="设备列表" />
@@ -64,7 +64,7 @@
 
         <Button
             android:id="@+id/butManage"
-            style="@style/text_white2"
+            style="@style/text_color3"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:background="@null"
@@ -73,7 +73,7 @@
 
         <Button
             android:id="@+id/butCurrency"
-            style="@style/text_white2"
+            style="@style/text_color3"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:background="@null"
@@ -82,7 +82,7 @@
 
         <Button
             android:id="@+id/butOut"
-            style="@style/text_white2"
+            style="@style/text_color3"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:background="@null"

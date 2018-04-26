@@ -1,12 +1,15 @@
 package com.dq.yanglao.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -86,12 +89,15 @@ public class MainActivity extends MyBaseActivity {
 
     private int pages = 0;
 
+    public static Context mContext;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setBaseContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        mContext = this;
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
 
         initData();
@@ -179,15 +185,15 @@ public class MainActivity extends MyBaseActivity {
     private void setBottomColor() {
         switch (index) {
             case 0:
-                mainIv1.setImageResource(R.mipmap.ic_launcher);
+                mainIv1.setImageResource(R.mipmap.ic_fm_homepage002);
                 mainTv1.setTextColor(getResources().getColor(R.color.main_color));
                 break;
             case 1:
-                mainIv2.setImageResource(R.mipmap.ic_launcher);
+                mainIv2.setImageResource(R.mipmap.ic_fm_healthy002);
                 mainTv2.setTextColor(getResources().getColor(R.color.main_color));
                 break;
             case 2:
-                mainIv3.setImageResource(R.mipmap.ic_launcher);
+                mainIv3.setImageResource(R.mipmap.ic_fm_location002);
                 mainTv3.setTextColor(getResources().getColor(R.color.main_color));
                 break;
             case 3:
@@ -195,7 +201,7 @@ public class MainActivity extends MyBaseActivity {
                 mainTv4.setTextColor(getResources().getColor(R.color.main_color));
                 break;
             case 4:
-                mainIv5.setImageResource(R.mipmap.ic_launcher);
+                mainIv5.setImageResource(R.mipmap.ic_fm_me002);
                 mainTv5.setTextColor(getResources().getColor(R.color.main_color));
                 break;
         }
@@ -207,24 +213,24 @@ public class MainActivity extends MyBaseActivity {
     private void removeBottomColor() {
         switch (currentTabIndex) {
             case 0:
-                mainIv1.setImageResource(R.mipmap.ic_launcher);
-                mainTv1.setTextColor(getResources().getColor(R.color.grad1));
+                mainIv1.setImageResource(R.mipmap.ic_fm_homepage001);
+                mainTv1.setTextColor(getResources().getColor(R.color.text_color2));
                 break;
             case 1:
-                mainIv2.setImageResource(R.mipmap.ic_launcher);
-                mainTv2.setTextColor(getResources().getColor(R.color.grad1));
+                mainIv2.setImageResource(R.mipmap.ic_fm_healthy001);
+                mainTv2.setTextColor(getResources().getColor(R.color.text_color2));
                 break;
             case 2:
-                mainIv3.setImageResource(R.mipmap.ic_launcher);
-                mainTv3.setTextColor(getResources().getColor(R.color.grad1));
+                mainIv3.setImageResource(R.mipmap.ic_fm_location001);
+                mainTv3.setTextColor(getResources().getColor(R.color.text_color2));
                 break;
             case 3:
                 mainIv4.setImageResource(R.mipmap.ic_launcher);
-                mainTv4.setTextColor(getResources().getColor(R.color.grad1));
+                mainTv4.setTextColor(getResources().getColor(R.color.text_color2));
                 break;
             case 4:
-                mainIv5.setImageResource(R.mipmap.ic_launcher);
-                mainTv5.setTextColor(getResources().getColor(R.color.grad1));
+                mainIv5.setImageResource(R.mipmap.ic_fm_me001);
+                mainTv5.setTextColor(getResources().getColor(R.color.text_color2));
                 break;
         }
     }
@@ -248,6 +254,22 @@ public class MainActivity extends MyBaseActivity {
                 fragmentControl(pages);
             }
         });
+    }
+
+
+    public void showDialog(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+        dialog.setTitle("测试全局弹框");
+        dialog.setMessage("正常弹出，你看到我了");
+        AlertDialog alertDialog = dialog.create();
+        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+        alertDialog.show();
+//        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+//        dialog.setTitle("测试全局弹框");
+//        dialog.setMessage("正常弹出，你看到我了");
+//        AlertDialog alertDialog = dialog.create();
+//        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+//        alertDialog.show();
     }
 
 }

@@ -8,16 +8,17 @@
 
     <!--返回-->
     <ImageButton
+        android:background="@null"
         android:id="@+id/title_ibtn_back"
         android:layout_width="@dimen/x88"
         android:layout_height="@dimen/x88"
         android:layout_gravity="center"
-        android:src="@mipmap/ic_launcher"
+        android:src="@mipmap/ic_back"
         android:visibility="gone"
         app:layout_auto_basewidth="height" />
     <!--标题-->
     <TextView
-        android:textColor="@color/white"
+        android:textColor="@color/bg1"
         android:id="@+id/title_tv_title"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/x88"
