@@ -1,23 +1,23 @@
 package com.dq.yanglao.ui;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.dq.yanglao.Interface.OnClickListenerSOS;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseActivity;
 import com.dq.yanglao.bean.DeviceBind;
+import com.dq.yanglao.bean.DeviceGet;
 import com.dq.yanglao.bean.UserInfo2;
 import com.dq.yanglao.utils.Base64Utils;
+import com.dq.yanglao.utils.DialogUtils;
+import com.dq.yanglao.utils.ForceExitReceiver;
 import com.dq.yanglao.utils.GsonUtil;
 import com.dq.yanglao.utils.HttpPath;
 import com.dq.yanglao.utils.HttpxUtils;
@@ -27,7 +27,6 @@ import com.dq.yanglao.utils.ScreenManagerUtils;
 
 import org.xutils.common.Callback;
 
-import java.lang.ref.WeakReference;
 import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,19 +40,13 @@ import butterknife.OnClick;
  * Created by jingang on 2018/4/24.
  */
 
-public class NoLoginActivity extends MyBaseActivity {
+public class NoLoginActivity extends MyBaseActivity implements OnClickListenerSOS {
     @Bind(R.id.butJoin)
     Button butJoin;
-
-    public static Context context;
-    private final MyHandler myHandler = new MyHandler(this);
-    private MyBroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
-    private Message message;
-
     @Bind(R.id.editJoin)
     EditText editJoin;
 
-    private String device, uid, PATH_RSA;
+    private String PATH_RSA;
     private String bind_result;
 
     @Override
@@ -64,8 +57,7 @@ public class NoLoginActivity extends MyBaseActivity {
         setTvTitle("未绑定设备");
         setIvBack();
 
-        context = this;
-        bindReceiver();
+        ForceExitReceiver.setOnClickListenerSOS(this);
     }
 
     @OnClick(R.id.butJoin)
@@ -74,7 +66,6 @@ public class NoLoginActivity extends MyBaseActivity {
             PATH_RSA = "device=" + editJoin.getText().toString().trim()
                     + "&uid=" + SPUtils.getPreference(NoLoginActivity.this, "uid")
                     + "&token=" + SPUtils.getPreference(NoLoginActivity.this, "token");
-
             try {
                 PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
                 byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
@@ -89,51 +80,25 @@ public class NoLoginActivity extends MyBaseActivity {
 
     }
 
-    private class MyHandler extends Handler {
-        private WeakReference<NoLoginActivity> mActivity;
+    @Override
+    public void onClickSOS(String msg) {
+        System.out.println("aaaaaaaaaaaaaa = "+msg);
 
-        MyHandler(NoLoginActivity activity) {
-            mActivity = new WeakReference<NoLoginActivity>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            if (mActivity != null) {
-                switch (msg.what) {
-                    case 1:
-                        //txtRcv.append(msg.obj.toString());
-                        System.out.println("接收 = " + msg.obj.toString());
-
-                        break;
-                    case 2:
-                        //txtSend.append(msg.obj.toString());
-                        //System.out.println("发送 = " + msg.obj.toString());
-                        break;
-                }
+        if (msg.equals("1")) {
+            // showMessage("绑定成功");
+            String PATH_RSA = "uid=" + SPUtils.getPreference(this, "uid") + "&token=" + SPUtils.getPreference(this, "token");
+            try {
+                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                getDevice(Base64Utils.encode(encryptByte).toString());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-    }
+        if (msg.equals("0")) {
+            showMessage("绑定失败");
 
-    private class MyBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String mAction = intent.getAction();
-            switch (mAction) {
-                case "tcpClientReceiver":
-                    String msg = intent.getStringExtra("tcpClientReceiver");
-                    Message message = Message.obtain();
-                    message.what = 1;
-                    message.obj = msg;
-                    myHandler.sendMessage(message);
-                    break;
-            }
         }
-    }
-
-    private void bindReceiver() {
-        IntentFilter intentFilter = new IntentFilter("tcpClientReceiver");
-        registerReceiver(myBroadcastReceiver, intentFilter);
     }
 
     /**
@@ -163,15 +128,7 @@ public class NoLoginActivity extends MyBaseActivity {
                                 ScreenManagerUtils.getInstance().removeActivity(NoLoginActivity.this);
                             }
                             if (device.getData().getIs_primary() == 0) {
-                                MyApplacation.exec.execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        message = Message.obtain();
-                                        message.what = 2;
-                                        myHandler.sendMessage(message);
-                                        MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(NoLoginActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
-                                    }
-                                });
+                                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(NoLoginActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
                             }
                         }
 
@@ -185,6 +142,69 @@ public class NoLoginActivity extends MyBaseActivity {
                                 showMessage(u2.getData());
                             }
                         }
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
+    }
+
+    /**
+     * 获取用户绑定设备
+     *
+     * @param afterencrypt
+     */
+    public void getDevice(String afterencrypt) {
+        System.out.println("用户绑定设备 = " + HttpPath.DEVICE_GETDEVICE + "sign=" + afterencrypt);
+        Map<String, Object> map = new HashMap<>();
+        map.put("sign", afterencrypt);
+        HttpxUtils.Post(this,
+                HttpPath.DEVICE_GETDEVICE,
+                map,
+                new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        System.out.println("用户绑定设备 = " + result);
+                        DeviceGet deviceGet = GsonUtil.gsonIntance().gsonToBean(result, DeviceGet.class);
+                        if (deviceGet.getStatus() == 1) {
+                            if (deviceGet.getData().size() > 0) {
+                                SPUtils.savePreference(NoLoginActivity.this, "isBind", "1");//0 未绑定  1已绑定
+                                SPUtils.savePreference(NoLoginActivity.this, "deviceid", deviceGet.getData().get(0).getDevice_id());
+                                DialogUtils.showDialog(NoLoginActivity.this,
+                                        "提示",
+                                        "管理员同意绑定",
+                                        new DialogUtils.OnDialogListener() {
+                                            @Override
+                                            public void confirm() {
+                                                goToActivity(MainActivity.class);
+                                                ScreenManagerUtils.getInstance().removeActivity(NoLoginActivity.this);
+                                            }
+
+                                            @Override
+                                            public void cancel() {
+                                                goToActivity(MainActivity.class);
+                                                ScreenManagerUtils.getInstance().removeActivity(NoLoginActivity.this);
+                                            }
+                                        });
+
+                                goToActivity(MainActivity.class);
+                            } else {
+
+                            }
+                            ScreenManagerUtils.getInstance().removeActivity(NoLoginActivity.this);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+
                     }
 
                     @Override

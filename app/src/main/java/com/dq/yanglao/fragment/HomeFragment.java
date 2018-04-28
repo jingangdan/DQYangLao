@@ -1,5 +1,7 @@
 package com.dq.yanglao.fragment;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,28 +9,42 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dq.yanglao.Interface.OnClickListenerSOS;
 import com.dq.yanglao.Interface.OnClickListeners;
 import com.dq.yanglao.Interface.OnItemClickListener;
 import com.dq.yanglao.Interface.OnItemClickListenerHeather;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.BaseRecyclerViewHolder;
+import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseFragment;
 import com.dq.yanglao.ui.ChatingActivity;
 import com.dq.yanglao.ui.EquipmentActivity;
 import com.dq.yanglao.ui.MainActivity;
+import com.dq.yanglao.ui.TelephoneActivity;
+import com.dq.yanglao.utils.DensityUtil;
+import com.dq.yanglao.utils.ForceExitReceiver;
+import com.dq.yanglao.utils.SPUtils;
+import com.dq.yanglao.utils.ScreenManagerUtils;
+import com.dq.yanglao.utils.ToastUtils;
 import com.dq.yanglao.view.rollpagerview.ImageLoopAdapter;
 import com.dq.yanglao.view.rollpagerview.RollPagerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +55,7 @@ import butterknife.OnClick;
  * Created by jingang on 2018/4/12.
  */
 
-public class HomeFragment extends MyBaseFragment {
+public class HomeFragment extends MyBaseFragment implements OnClickListenerSOS {
     @Bind(R.id.rollPagerView)
     RollPagerView rollPagerView;
     @Bind(R.id.rvHomeMenu)
@@ -62,6 +78,8 @@ public class HomeFragment extends MyBaseFragment {
         ButterKnife.bind(this, view);
 
         initData();
+
+        ForceExitReceiver.setOnClickListenerSOS(this);
 
         return view;
     }
@@ -106,9 +124,49 @@ public class HomeFragment extends MyBaseFragment {
                         break;
                     case 1:
                         //通话
+                        final Dialog bottomDialog = new Dialog(getActivity(), R.style.BottomDialog);
+                        View views = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_call, null);
+                        bottomDialog.setContentView(views);
+                        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) views.getLayoutParams();
+                        params.width = getActivity().getResources().getDisplayMetrics().widthPixels - DensityUtil.dp2px(getActivity(), 100f);
+                        params.bottomMargin = DensityUtil.dp2px(getActivity(), 100f);
+                        views.setLayoutParams(params);
+                        bottomDialog.getWindow().setGravity(Gravity.CENTER);
+                        bottomDialog.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
+                        bottomDialog.show();
+
+                        final EditText editText = (EditText) views.findViewById(R.id.editDialogCall);
+                        Button butNo = (Button) views.findViewById(R.id.butDialogCallNo);
+                        Button butYes = (Button) views.findViewById(R.id.butDialogCallYes);
+
+                        butYes.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (!TextUtils.isEmpty(editText.getText().toString().trim())) {
+                                    if (isMobile(editText.getText().toString().trim())) {
+                                        //[DQHB*uid*LEN*CALL,device_id,号码]
+                                        MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(getActivity(), "uid") + "*16*CALL," + SPUtils.getPreference(getActivity(), "deviceid") + "," + editText.getText().toString().trim() + "]");
+                                        bottomDialog.dismiss();
+                                    } else {
+                                        ToastUtils.getInstance(getActivity()).showMessage("请输入正确的电话号码");
+                                    }
+                                } else {
+                                    ToastUtils.getInstance(getActivity()).showMessage("请输入电话号码");
+                                }
+                            }
+                        });
+
+                        butNo.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                bottomDialog.dismiss();
+                            }
+                        });
+
                         break;
                     case 2:
                         //电话本
+                        startActivity(new Intent(getActivity(), TelephoneActivity.class));
                         break;
                     case 3:
                         //吃药提醒
@@ -167,6 +225,11 @@ public class HomeFragment extends MyBaseFragment {
                 break;
         }
 
+    }
+
+    @Override
+    public void onClickSOS(String msg) {
+        System.out.println("hone = " + msg);
     }
 
     private class RVAdapter1 extends RecyclerView.Adapter<RVAdapter1.MyViewHolder> {
@@ -276,5 +339,21 @@ public class HomeFragment extends MyBaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    /**
+     * 手机号验证
+     *
+     * @param str
+     * @return 验证通过返回true
+     */
+    public static boolean isMobile(String str) {
+        Pattern p = null;
+        Matcher m = null;
+        boolean b = false;
+        p = Pattern.compile("^[1][3,4,5,7,8][0-9]{9}$"); // 验证手机号
+        m = p.matcher(str);
+        b = m.matches();
+        return b;
     }
 }

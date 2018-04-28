@@ -35,7 +35,7 @@ public class StartActivity extends MyBaseActivity {
                 }
                 isLogin = SPUtils.getPreference(StartActivity.this, "isLogin");
                 isBind = SPUtils.getPreference(StartActivity.this, "isBind");
-                //goToActivity(LoginActivity.class);
+                // goToActivity(TestActivity.class);
 
                 if (isLogin.equals("") || isLogin.equals("0")) {
                     goToActivity(LoginActivity.class);
@@ -48,23 +48,6 @@ public class StartActivity extends MyBaseActivity {
                         goToActivity(MainActivity.class);
                     }
                 }
-
-
-//                if (isLogin.equals("") && isLogin.equals("0")) {
-//                    System.out.println("1111");
-//                    goToActivity(LoginActivity.class);
-//                }
-//                if (isLogin.equals("1")) {
-//                    System.out.println("2222");
-//                    if (isBind.equals("0") && isBind.equals("")) {
-//                        System.out.println("3333");
-//                        goToActivity(NoLoginActivity.class);
-//                    }
-//                    if (isBind.equals("1")) {
-//                        System.out.println("4444");
-//                        goToActivity(MainActivity.class);
-//                    }
-//                }
                 finish();
             }
         }).start();

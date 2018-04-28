@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg1"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+
+    <EditText
+        android:id="@+id/editAddTelephoneName"
+        style="@style/edit_color2"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/kuang_grad"
+        android:hint="请输入姓名"
+        android:padding="10dp" />
+
+    <EditText
+        android:id="@+id/editAddTelephoneMobile"
+        style="@style/edit_color2"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/kuang_grad"
+        android:hint="请输入电话号码"
+        android:inputType="number"
+        android:padding="10dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="20dp"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/butAddTelephone"
+            style="@style/text_color3"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:background="@drawable/kuang_red"
+            android:text="保存"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

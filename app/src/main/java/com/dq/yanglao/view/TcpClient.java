@@ -31,11 +31,13 @@ public class TcpClient implements Runnable {
     private int rcvLen;
 
     private Context context;
+    private long LastCheckTime;
 
     public TcpClient(String ip, int port, Context context) {
         this.context = context;
         this.serverIP = ip;
         this.serverPort = port;
+        LastCheckTime = System.currentTimeMillis();
     }
 
     public void closeSelf() {
@@ -65,30 +67,34 @@ public class TcpClient implements Runnable {
         }
         while (isRun) {
             try {
-                if (dis != null) {
-//                    while ((rcvLen = dis.read(buff)) != -1) {
-//                        rcvLen = dis.read(buff);
-//                        rcvMsg = new String(buff, 0, rcvLen, "utf-8");
-//                        Log.i(TAG, "run: 收到消息:" + rcvMsg);
-//                        Intent intent = new Intent();
-//                        intent.setAction("tcpClientReceiver");
-//                        intent.putExtra("tcpClientReceiver", rcvMsg);
-//                        MyApplacation.context.sendBroadcast(intent);//将消息发送给主界面
-//                        if (rcvMsg.equals("QuitClient")) {   //服务器要求客户端结束
-//                            isRun = false;
-//                        }
-//                    }
-                    rcvLen = dis.read(buff);
-                    rcvMsg = new String(buff, 0, rcvLen, "utf-8");
-                    Log.i(TAG, "run: 收到消息:" + rcvMsg);
-                    Intent intent = new Intent();
-                    intent.setAction("tcpClientReceiver");
-                    intent.putExtra("tcpClientReceiver", rcvMsg);
-                    MyApplacation.context.sendBroadcast(intent);//将消息发送给主界面
-                    if (rcvMsg.equals("QuitClient")) {   //服务器要求客户端结束
-                        isRun = false;
+                if (socket != null) {
+                    if (!socket.isConnected() || socket.isClosed()) {
+                        if (pw == null) {
+                            pw = new PrintWriter(socket.getOutputStream(), true);
+                        }
+                        if (dis == null) {
+                            is = socket.getInputStream();
+                            dis = new DataInputStream(is);
+                        }
+                    } else if (dis != null) {
+                        if (dis.available() > 0) {
+                            rcvLen = dis.read(buff);
+                            rcvMsg = new String(buff, 0, rcvLen, "utf-8");
+                            Log.i(TAG, "run: 收到消息:" + rcvMsg);
+                            Intent intent = new Intent();
+                            intent.setAction("tcpClientReceiver");
+                            intent.putExtra("tcpClientReceiver", rcvMsg);
+                            MyApplacation.context.sendBroadcast(intent);//将消息发送给主界面
+                            if (rcvMsg.equals("QuitClient")) {   //服务器要求客户端结束
+                                isRun = false;
+                            }
+                        }
                     }
-
+                } else {
+                    Intent intent = new Intent("com.example.broadcast.FORCE_EXIT");
+                    intent.putExtra("msg", "[DQHB*1*0005*NOSOCKET]");
+                    context.sendBroadcast(intent);
+                    break;
                 }
 
             } catch (IOException e) {

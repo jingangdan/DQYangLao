@@ -15,31 +15,34 @@
         android:padding="10dp">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/tvDialogDeviceName"
+            style="@style/text_color1"
             android:text="申请授权设备：" />
 
         <ImageView
+            android:id="@+id/ivDialogHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_launcher" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/text_color1"
             android:text="申请人手机（账号）" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="123456" />
+            android:id="@+id/tvDialogMobile"
+            style="@style/text_color1"
+            android:text="123456"
+            android:textSize="16dp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/tvDialogName"
+            style="@style/text_color1"
             android:text="昵称：" />
 
         <TextView
+            android:id="@+id/tvDialogRelation"
+            style="@style/text_color1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="关系" />
@@ -52,12 +55,14 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/butDialogNo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="拒绝" />
 
         <Button
+            android:id="@+id/butDialogYes"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"

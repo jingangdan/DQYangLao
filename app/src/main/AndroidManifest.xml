@@ -162,9 +162,38 @@
         <!--首页-微聊-群组信息-->
         <activity android:name=".ui.GroupInfoActivity" />
 
+        <!--首页-电话本-->
+        <activity
+            android:name=".ui.TelephoneActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <!--首页-电话本-编辑联系人-->
+        <activity
+            android:name=".ui.AddTelephoneActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
         <!--我的-SOS/亲情号码-->
         <activity
             android:name=".ui.SosActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <!--我的-设备列表-->
+        <activity
+            android:name=".ui.DeviceActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <!--我的-设备列表-添加设备-->
+        <activity
+            android:name=".ui.AddDeviceActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <activity
+            android:name=".ui.TestActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 

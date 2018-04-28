@@ -13,6 +13,7 @@ import com.dq.yanglao.Interface.OnClickListeners;
 import com.dq.yanglao.R;
 import com.dq.yanglao.adapter.SimpleFragmentPagerAdapter;
 import com.dq.yanglao.base.MyBaseFragment;
+import com.dq.yanglao.utils.SPUtils;
 import com.dq.yanglao.view.NoScrollViewPager;
 
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class HealthyFragment extends MyBaseFragment implements ViewPager.OnPageC
 
     private OnClickListeners onClickListeners;
 
+    private String deviceid, uid, token;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,9 +57,13 @@ public class HealthyFragment extends MyBaseFragment implements ViewPager.OnPageC
     }
 
     public void setFragment(int page) {
-        fragments.add(FMStep.newInstance());
-        fragments.add(FMStep.newInstance());
-        fragments.add(FMStep.newInstance());
+        deviceid = SPUtils.getPreference(getActivity(), "deviceid");
+        uid = SPUtils.getPreference(getActivity(), "uid");
+        token = SPUtils.getPreference(getActivity(), "token");
+
+        fragments.add(FMMove.newInstance(deviceid, uid, token));
+        fragments.add(FMHeartBeat.newInstance(deviceid, uid, token));
+        fragments.add(FMHeartBeat.newInstance(deviceid, uid, token));
 
         sfpAdapter = new SimpleFragmentPagerAdapter(getActivity().getSupportFragmentManager(), getActivity(), fragments, titles);
         noScrollViewPager1.setAdapter(sfpAdapter);

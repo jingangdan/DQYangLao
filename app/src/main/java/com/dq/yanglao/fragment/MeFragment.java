@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseFragment;
+import com.dq.yanglao.ui.DeviceActivity;
 import com.dq.yanglao.ui.LoginActivity;
 import com.dq.yanglao.ui.SosActivity;
 import com.dq.yanglao.utils.SPUtils;
@@ -30,6 +31,8 @@ public class MeFragment extends MyBaseFragment {
     LinearLayout linMeSOS;
     @Bind(R.id.butMeOut)
     Button butMeOut;
+    @Bind(R.id.linMeDevice)
+    LinearLayout linMeDevice;
 
     @Nullable
     @Override
@@ -40,11 +43,15 @@ public class MeFragment extends MyBaseFragment {
         return view;
     }
 
-    @OnClick({R.id.linMeSOS, R.id.butMeOut})
+    @OnClick({R.id.linMeSOS, R.id.butMeOut,R.id.linMeDevice})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.linMeSOS:
                 startActivity(new Intent(getActivity(), SosActivity.class));
+                break;
+            case R.id.linMeDevice:
+                //设备列表
+                startActivity(new Intent(getActivity(), DeviceActivity.class));
                 break;
             case R.id.butMeOut:
                 SPUtils.savePreference(getActivity(), "isLogin", "0");//0 未登录  1已登录

@@ -49,6 +49,15 @@ public class DeviceGet {
         private String is_primary;
         private String apply_status;
         private DeviceBean device;
+        private boolean isDefault;
+
+        public boolean isDefault() {
+            return isDefault;
+        }
+
+        public void setDefault(boolean aDefault) {
+            isDefault = aDefault;
+        }
 
         public String getId() {
             return id;

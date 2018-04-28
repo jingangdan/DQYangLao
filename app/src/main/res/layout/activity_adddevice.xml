@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/editAddDeviceCode"
+        style="@style/edit_color2"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/kuang_grad"
+        android:hint="请输入设备编号"
+        android:inputType="number"
+        android:padding="10dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:text="基本信息：" />
+
+    <EditText
+        android:id="@+id/editAddDeviceName"
+        style="@style/edit_color2"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/kuang_grad"
+        android:hint="请输入设备昵称"
+        android:inputType="number"
+        android:padding="10dp" />
+
+    <EditText
+        android:id="@+id/editAddDeviceRelation"
+        style="@style/edit_color2"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/kuang_grad"
+        android:hint="请输入与设备关系"
+        android:inputType="number"
+        android:padding="10dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="20dp"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/butAddDevice"
+            style="@style/text_color3"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:background="@drawable/kuang_red"
+            android:text="绑定"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

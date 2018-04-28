@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Message;
 import android.support.multidex.MultiDexApplication;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -216,23 +217,28 @@ public class MyApplacation extends MultiDexApplication {
                     case 1:
                         Toast.makeText(MyApplacation.this, "MyApplication接收 = " + msg.obj.toString(), Toast.LENGTH_LONG).show();
                         System.out.println("MyApplication接收 = " + msg.obj.toString());
+
+                        if (!TextUtils.isEmpty(msg.obj.toString())) {
+                            setReceicer(msg.obj.toString());
+                        }
+
                         //[DQHB*1*0007*AUTH,84]
-                        String[] temp = null;
-                        String str = msg.obj.toString().substring(1, msg.obj.toString().indexOf("]"));
-                        temp = str.split(",");
-                        if (temp.length > 1) {
-                            String PATH_RSA = "id=" + temp[1] + "&uid=" + SPUtils.getPreference(MyApplacation.this, "uid") + "&token=" + SPUtils.getPreference(MyApplacation.this, "token");
-                            try {
-                                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
-                                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
-                                xUtilsInfo(Base64Utils.encode(encryptByte).toString());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (msg.obj.toString().equals("[DQHB*1*0005*CHECK]")) {
-                            tcpClient.send(msg.obj.toString());
-                        }
+//                        String[] temp = null;
+//                        String str = msg.obj.toString().substring(1, msg.obj.toString().indexOf("]"));
+//                        temp = str.split(",");
+//                        if (temp.length > 1) {
+//                            String PATH_RSA = "id=" + temp[1] + "&uid=" + SPUtils.getPreference(MyApplacation.this, "uid") + "&token=" + SPUtils.getPreference(MyApplacation.this, "token");
+//                            try {
+//                                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+//                                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+//                                xUtilsInfo(Base64Utils.encode(encryptByte).toString());
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                        if (msg.obj.toString().equals("[DQHB*1*0005*CHECK]")) {
+//                            tcpClient.send(msg.obj.toString());
+//                        }
                         break;
                     case 2:
                         System.out.println("MyApplication发送 = " + msg.obj.toString());
@@ -262,10 +268,7 @@ public class MyApplacation extends MultiDexApplication {
                 System.out.println("授权 = " + result);
                 DeviceInfo deviceInfo = GsonUtil.gsonIntance().gsonToBean(result, DeviceInfo.class);
                 if (deviceInfo.getStatus() == 1) {
-                    //dialog();
-
-                    Log.e("application","11111");
-                    setReceicer();
+                    //setReceicer();
                 }
 
             }
@@ -287,30 +290,7 @@ public class MyApplacation extends MultiDexApplication {
         });
     }
 
-    private void dialog() {
-
-        Dialog bottomDialog = new Dialog(MainActivity.mContext, R.style.BottomDialog);
-        View contentView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialog_shouquan, null);
-        bottomDialog.setContentView(contentView);
-        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) contentView.getLayoutParams();
-        params.width = getResources().getDisplayMetrics().widthPixels - DensityUtil.dp2px(MainActivity.mContext, 16f);
-        params.bottomMargin = DensityUtil.dp2px(MainActivity.mContext, 8f);
-        contentView.setLayoutParams(params);
-        bottomDialog.getWindow().setGravity(Gravity.CENTER);
-
-//        if (Build.VERSION.SDK_INT > 24) {
-//            bottomDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
-//        } else {
-//            bottomDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
-//        }
-        bottomDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-
-        bottomDialog.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
-        bottomDialog.show();
-
-    }
-
-    public void setReceicer(){
+    public void setReceicer(final String msg) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -319,11 +299,9 @@ public class MyApplacation extends MultiDexApplication {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Log.e("application","22222");
                 Intent intent = new Intent("com.example.broadcast.FORCE_EXIT");
-                Log.e("application","33333");
+                intent.putExtra("msg", msg);
                 sendBroadcast(intent);
-                System.out.println("333");
             }
         }).start();
     }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linTelephoneHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/bg2"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <ImageView
+            android:layout_width="160dp"
+            android:layout_height="80dp"
+            android:padding="10dp"
+            android:src="@mipmap/ic_telephone" />
+
+        <TextView
+            style="@style/text_color1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="添加通讯号码至设备端，当TA在使用设备时就可以方便地拨打电话。" />
+
+        <TextView
+            style="@style/text_color2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="最多可添加10个号码"
+            android:textSize="12dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linTelephoneFooter"
+        android:layout_below="@+id/linTelephoneHeader">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvTelephone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linTelephoneFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/butTelephone"
+            style="@style/text_color3"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:background="@drawable/kuang_red"
+            android:text="添加号码"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>
