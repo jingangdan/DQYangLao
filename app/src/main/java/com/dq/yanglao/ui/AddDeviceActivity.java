@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.dq.yanglao.Interface.OnClickListenerSOS;
+import com.dq.yanglao.Interface.OnCallBackTCP;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseActivity;
@@ -36,7 +36,7 @@ import butterknife.OnClick;
  * Created by jingang on 2018/4/27.
  */
 
-public class AddDeviceActivity extends MyBaseActivity implements OnClickListenerSOS {
+public class AddDeviceActivity extends MyBaseActivity implements OnCallBackTCP {
     @Bind(R.id.editAddDeviceCode)
     EditText editAddDeviceCode;
     @Bind(R.id.editAddDeviceName)
@@ -118,7 +118,8 @@ public class AddDeviceActivity extends MyBaseActivity implements OnClickListener
 
                             }
                             if (device.getData().getIs_primary() == 0) {
-                                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(AddDeviceActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
+//                                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(AddDeviceActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
+                                MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(AddDeviceActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
                             }
                         }
 
@@ -148,17 +149,22 @@ public class AddDeviceActivity extends MyBaseActivity implements OnClickListener
     }
 
     @Override
-    public void onClickSOS(String msg) {
-        if (msg.equals("1")) {
-            //同意
-            showMessage("添加成功");
-            Intent intent = new Intent();
-            setResult(CodeUtils.DEVICE_ADD, intent);
-            this.finish();
+    public void onCallback(String type, String msg) {
+        if(!TextUtils.isEmpty(msg)){
+            String[] temp = null;
+            temp = msg.split(",");//以逗号拆分
+            if (temp[1].equals("1")) {
+                //同意
+                showMessage("添加成功");
+                Intent intent = new Intent();
+                setResult(CodeUtils.DEVICE_ADD, intent);
+                this.finish();
+            }
+            if (temp[1].equals("0")) {
+                //拒绝
+                showMessage("请求被拒绝");
+            }
         }
-        if (msg.equals("0")) {
-            //拒绝
-            showMessage("请求被拒绝");
-        }
+
     }
 }

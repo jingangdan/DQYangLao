@@ -15,6 +15,7 @@ import com.dq.yanglao.base.MyBaseFragment;
 import com.dq.yanglao.ui.DeviceActivity;
 import com.dq.yanglao.ui.LoginActivity;
 import com.dq.yanglao.ui.SosActivity;
+import com.dq.yanglao.utils.DialogUtils;
 import com.dq.yanglao.utils.SPUtils;
 import com.dq.yanglao.utils.ScreenManagerUtils;
 
@@ -43,7 +44,7 @@ public class MeFragment extends MyBaseFragment {
         return view;
     }
 
-    @OnClick({R.id.linMeSOS, R.id.butMeOut,R.id.linMeDevice})
+    @OnClick({R.id.linMeSOS, R.id.butMeOut, R.id.linMeDevice})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.linMeSOS:
@@ -54,13 +55,28 @@ public class MeFragment extends MyBaseFragment {
                 startActivity(new Intent(getActivity(), DeviceActivity.class));
                 break;
             case R.id.butMeOut:
-                SPUtils.savePreference(getActivity(), "isLogin", "0");//0 未登录  1已登录
-                SPUtils.savePreference(getActivity(), "isBind", "0");
 
-                startActivity(new Intent(getActivity(), LoginActivity.class));
-                ScreenManagerUtils.getInstance().removeActivity(getActivity());
+                DialogUtils.showDialog(getActivity(), "提示：", "确定要退出登录吗？", new DialogUtils.OnDialogListener() {
+                    @Override
+                    public void confirm() {
+                        SPUtils.savePreference(getActivity(), "isLogin", "0");//0 未登录  1已登录
+                        SPUtils.savePreference(getActivity(), "isBind", "0");
 
-                MyApplacation.tcpClient.closeSelf();
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
+                        ScreenManagerUtils.getInstance().removeActivity(getActivity());
+
+//                        MyApplacation.tcpClient.closeSelf();
+                        MyApplacation.tcpHelper.closeTCP();
+
+                    }
+
+                    @Override
+                    public void cancel() {
+
+                    }
+                });
+
+
                 break;
         }
 

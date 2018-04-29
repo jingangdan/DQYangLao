@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
-import com.dq.yanglao.Interface.OnClickListenerSOS;
+import com.dq.yanglao.Interface.OnCallBackTCP;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseFragment;
@@ -22,6 +22,7 @@ import com.dq.yanglao.utils.GsonUtil;
 import com.dq.yanglao.utils.HttpPath;
 import com.dq.yanglao.utils.HttpxUtils;
 import com.dq.yanglao.utils.RSAUtils;
+import com.dq.yanglao.utils.ToastUtils;
 
 import org.xutils.common.Callback;
 
@@ -38,7 +39,7 @@ import butterknife.OnClick;
  * Created by jingang on 2018/4/12.
  */
 
-public class FMHeartBeat extends MyBaseFragment implements OnClickListenerSOS {
+public class FMHeartBeat extends MyBaseFragment implements OnCallBackTCP {
     @Bind(R.id.butHeartBeatFront)
     Button butHeartBeatFront;
     @Bind(R.id.tvHeartBeatDate)
@@ -97,7 +98,8 @@ public class FMHeartBeat extends MyBaseFragment implements OnClickListenerSOS {
             case R.id.butHeartMeasure:
                 //测量
                 //[DQHB*uid*LEN*hrtstart,1]
-                MyApplacation.tcpClient.send("[DQHB*" + getArguments().getString("uid") + "*16*hrtstart," + getArguments().getString("deviceid") + ",1");
+//                MyApplacation.tcpClient.send("[DQHB*" + getArguments().getString("uid") + "*16*hrtstart," + getArguments().getString("deviceid") + ",1");
+                MyApplacation.tcpHelper.SendString("[DQHB*" + getArguments().getString("uid") + "*16*hrtstart," + getArguments().getString("deviceid") + ",1");
 
                 break;
         }
@@ -217,7 +219,18 @@ public class FMHeartBeat extends MyBaseFragment implements OnClickListenerSOS {
     }
 
     @Override
-    public void onClickSOS(String msg) {
-        System.out.println("11111111111111 = " + msg);
+    public void onCallback(String type, String msg) {
+        if (type.equals("hrtstart")) {
+            ToastUtils.getInstance(getActivity()).showMessage("测量心率请求发出");
+        } else if (type.equals("heart")) {
+            //接收到
+            ToastUtils.getInstance(getActivity()).showMessage("测量结果返回");
+            String[] temp = null;
+            temp = msg.split(",");//以逗号拆分
+            tvHeartBeatDate.setText(temp[2]);
+            tvHeartBeatNum.setText(temp[1]);
+        }
+
+
     }
 }

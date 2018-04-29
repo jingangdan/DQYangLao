@@ -1,39 +1,22 @@
 package com.dq.yanglao.base;
 
 import android.app.ActivityManager;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.Message;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.dq.yanglao.R;
-import com.dq.yanglao.bean.DeviceInfo;
-import com.dq.yanglao.ui.MainActivity;
-import com.dq.yanglao.utils.Base64Utils;
-import com.dq.yanglao.utils.DensityUtil;
-import com.dq.yanglao.utils.GsonUtil;
-import com.dq.yanglao.utils.HttpPath;
-import com.dq.yanglao.utils.RSAUtils;
 import com.dq.yanglao.utils.SPUtils;
+import com.dq.yanglao.utils.ToastUtils;
 import com.dq.yanglao.view.TcpClient;
-
-import org.xutils.common.Callback;
-import org.xutils.http.RequestParams;
-import org.xutils.x;
+import com.dq.yanglao.view.TcpHelper;
 
 import java.lang.ref.WeakReference;
-import java.security.PrivateKey;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,11 +29,18 @@ import io.rong.imkit.RongIM;
  */
 public class MyApplacation extends MultiDexApplication {
     public static Context context;
-    public static TcpClient tcpClient;
-    public static ExecutorService exec;
+//    public static TcpClient tcpClient;
+//    public static ExecutorService exec;
 
-    private final MyHandler myHandler = new MyHandler(this);
-    private MyBroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
+//    private final MyHandler myHandler = new MyHandler(this);
+//    private MyBroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
+
+
+    //
+    public static TcpHelper tcpHelper;
+    private String TcpRecData;
+    private MyHandler handler;
+    public static TcpReceive tcpReceive;
 
     @Override
     public void onCreate() {
@@ -81,7 +71,6 @@ public class MyApplacation extends MultiDexApplication {
         if (SPUtils.getPreference(this, "isLogin").equals("1")) {
             startTCP();
         }
-
 
 //        //百度地图
 //        SDKInitializer.initialize(getApplicationContext());
@@ -177,118 +166,108 @@ public class MyApplacation extends MultiDexApplication {
     }
 
     public void startTCP() {
-        bindReceiver();
-        if (tcpClient == null) {
-            exec = Executors.newCachedThreadPool();
-//            tcpClient = new TcpClient("192.168.0.128", 49152, this);
-            tcpClient = new TcpClient("47.52.199.154", 49152, this);
-            exec.execute(tcpClient);
+        if (tcpHelper == null) {
+            tcpHelper = new TcpHelper("47.52.199.154", 49152, this);
+            tcpReceive = new TcpReceive();
+            tcpHelper.setReceiveEvent(tcpReceive);
+            handler = new MyHandler();
+
         }
     }
 
-    private class MyBroadcastReceiver extends BroadcastReceiver {
+    public class TcpReceive implements TcpHelper.OnReceiveEvent {
+        public synchronized void ReceiveBytes(byte[] iData) {
+        }
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String mAction = intent.getAction();
-            switch (mAction) {
-                case "tcpClientReceiver":
-                    String msg = intent.getStringExtra("tcpClientReceiver");
-                    Message message = Message.obtain();
-                    message.what = 1;
-                    message.obj = msg;
-                    myHandler.sendMessage(message);
-                    break;
-            }
+        public synchronized void ReceiveString(String iData) {
+            TcpRecData = iData;
+            Message msg = new Message();
+            msg.what = 1;
+            handler.sendMessage(msg);
         }
     }
 
-    private class MyHandler extends android.os.Handler {
-        private WeakReference<MyApplacation> mActivity;
-
-        MyHandler(MyApplacation activity) {
-            mActivity = new WeakReference<MyApplacation>(activity);
+    class MyHandler extends Handler {
+        public MyHandler() {
         }
 
         @Override
         public void handleMessage(Message msg) {
-            if (mActivity != null) {
-                switch (msg.what) {
-                    case 1:
-                        Toast.makeText(MyApplacation.this, "MyApplication接收 = " + msg.obj.toString(), Toast.LENGTH_LONG).show();
-                        System.out.println("MyApplication接收 = " + msg.obj.toString());
+            switch (msg.what) {
+                case 1:
+                    // butTest.append(TcpRecData);  //接收到数据显示到TextView上
+//                    Toast.makeText(MyApplacation.this, "MyApplication接收 = " + msg.obj.toString(), Toast.LENGTH_LONG).show();
+//                    System.out.println("MyApplication接收 = " + msg.obj.toString());
 
-                        if (!TextUtils.isEmpty(msg.obj.toString())) {
-                            setReceicer(msg.obj.toString());
-                        }
+                    ToastUtils.getInstance(context).showMessage("MyApplication接收 =" + TcpRecData);
+                    System.out.println("MyApplication接收 = " + TcpRecData);
 
-                        //[DQHB*1*0007*AUTH,84]
-//                        String[] temp = null;
-//                        String str = msg.obj.toString().substring(1, msg.obj.toString().indexOf("]"));
-//                        temp = str.split(",");
-//                        if (temp.length > 1) {
-//                            String PATH_RSA = "id=" + temp[1] + "&uid=" + SPUtils.getPreference(MyApplacation.this, "uid") + "&token=" + SPUtils.getPreference(MyApplacation.this, "token");
-//                            try {
-//                                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
-//                                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
-//                                xUtilsInfo(Base64Utils.encode(encryptByte).toString());
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                        if (msg.obj.toString().equals("[DQHB*1*0005*CHECK]")) {
-//                            tcpClient.send(msg.obj.toString());
-//                        }
-                        break;
-                    case 2:
-                        System.out.println("MyApplication发送 = " + msg.obj.toString());
-                        break;
-                }
+                    if (!TextUtils.isEmpty(TcpRecData)) {
+                        setReceicer(TcpRecData);
+                    }
+                    break;
             }
+            super.handleMessage(msg);
         }
     }
 
-    private void bindReceiver() {
-        IntentFilter intentFilter = new IntentFilter("tcpClientReceiver");
-        registerReceiver(myBroadcastReceiver, intentFilter);
-    }
+//    public void startTCP() {
+//        bindReceiver();
+//        if (tcpClient == null) {
+//            exec = Executors.newCachedThreadPool();
+//            tcpClient = new TcpClient("47.52.199.154", 49152, this);
+//            exec.execute(tcpClient);
+//        }
+//    }
 
-    /**
-     * 授权
-     *
-     * @param sign
-     */
-    public void xUtilsInfo(String sign) {
-        System.out.println("授权 = " + HttpPath.DEVICE_INFO + "sign=" + sign);
-        RequestParams params = new RequestParams(HttpPath.DEVICE_INFO);
-        params.addBodyParameter("sign", sign);
-        x.http().post(params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                System.out.println("授权 = " + result);
-                DeviceInfo deviceInfo = GsonUtil.gsonIntance().gsonToBean(result, DeviceInfo.class);
-                if (deviceInfo.getStatus() == 1) {
-                    //setReceicer();
-                }
+//    private class MyBroadcastReceiver extends BroadcastReceiver {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String mAction = intent.getAction();
+//            switch (mAction) {
+//                case "tcpClientReceiver":
+//                    String msg = intent.getStringExtra("tcpClientReceiver");
+//                    Message message = Message.obtain();
+//                    message.what = 1;
+//                    message.obj = msg;
+//                    myHandler.sendMessage(message);
+//                    break;
+//            }
+//        }
+//    }
 
-            }
+//    private class MyHandler extends android.os.Handler {
+//        private WeakReference<MyApplacation> mActivity;
+//
+//        MyHandler(MyApplacation activity) {
+//            mActivity = new WeakReference<MyApplacation>(activity);
+//        }
+//
+//        @Override
+//        public void handleMessage(Message msg) {
+//            if (mActivity != null) {
+//                switch (msg.what) {
+//                    case 1:
+//                        Toast.makeText(MyApplacation.this, "MyApplication接收 = " + msg.obj.toString(), Toast.LENGTH_LONG).show();
+//                        System.out.println("MyApplication接收 = " + msg.obj.toString());
+//
+//                        if (!TextUtils.isEmpty(msg.obj.toString())) {
+//                            setReceicer(msg.obj.toString());
+//                        }
+//                        break;
+//                    case 2:
+//                        System.out.println("MyApplication发送 = " + msg.obj.toString());
+//                        break;
+//                }
+//            }
+//        }
+//    }
 
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
-    }
+//    private void bindReceiver() {
+//        IntentFilter intentFilter = new IntentFilter("tcpClientReceiver");
+//        registerReceiver(myBroadcastReceiver, intentFilter);
+//    }
 
     public void setReceicer(final String msg) {
         new Thread(new Runnable() {

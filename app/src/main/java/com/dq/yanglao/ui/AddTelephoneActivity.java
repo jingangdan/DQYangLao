@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.dq.yanglao.Interface.OnClickListenerSOS;
+import com.dq.yanglao.Interface.OnCallBackTCP;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseActivity;
@@ -29,7 +29,7 @@ import butterknife.OnClick;
  * Created by jingang on 2018/4/27.
  */
 
-public class AddTelephoneActivity extends MyBaseActivity implements OnClickListenerSOS {
+public class AddTelephoneActivity extends MyBaseActivity implements OnCallBackTCP {
     @Bind(R.id.editAddTelephoneName)
     EditText editAddTelephoneName;
     @Bind(R.id.editAddTelephoneMobile)
@@ -87,13 +87,13 @@ public class AddTelephoneActivity extends MyBaseActivity implements OnClickListe
         if (!isClick) {
             isClick = true;
             //[DQHB*uid*LEN*PHB,device_id,号码,名字,号码,名字,号码,名字,号码,名字,号码,名字]
-            MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*PHB,"
+//            MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*PHB,"
+//                    + SPUtils.getPreference(this, "deviceid") + ","
+//                    + s + editAddTelephoneMobile.getText().toString().trim() + "," + editAddTelephoneName.getText().toString().trim() + "]");
+
+            MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*PHB,"
                     + SPUtils.getPreference(this, "deviceid") + ","
                     + s + editAddTelephoneMobile.getText().toString().trim() + "," + editAddTelephoneName.getText().toString().trim() + "]");
-
-//                System.out.println("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*PHB,"
-//                        + SPUtils.getPreference(this, "deviceid") + ","
-//                        + s + editAddTelephoneName.getText().toString().trim() + "," + editAddTelephoneMobile.getText().toString().trim() + "]");
         }
     }
 
@@ -114,16 +114,14 @@ public class AddTelephoneActivity extends MyBaseActivity implements OnClickListe
     }
 
     @Override
-    public void onClickSOS(String msg) {
+    public void onCallback(String type, String msg) {
         isClick = false;
         //添加情况
-        if (msg.equals("PHB")) {
+        if (type.equals("PHB")) {
             showMessage("添加成功");
             Intent intent = new Intent();
             setResult(CodeUtils.TELEPHONE_ADD, intent);
             this.finish();
         }
-
     }
-
 }

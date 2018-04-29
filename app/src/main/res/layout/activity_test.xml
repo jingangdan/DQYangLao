@@ -35,4 +35,17 @@
         android:layout_marginTop="20dp"
         android:textColor="@color/bg1" />
 
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onConnectClick"
+        android:text="连接" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onSendMsgClick"
+        android:text="发送" />
+
 </LinearLayout>

@@ -261,9 +261,14 @@ public class LoginActivity extends MyBaseActivity {
                             SPUtils.savePreference(LoginActivity.this, "uid", u1.getData().getId());
                             SPUtils.savePreference(LoginActivity.this, "token", u1.getData().getToken());//用户id
 
-                            MyApplacation.exec = Executors.newCachedThreadPool();
-                            MyApplacation.tcpClient = new TcpClient("47.52.199.154", 49152, MyApplacation.context);
-                            MyApplacation.exec.execute(MyApplacation.tcpClient);
+//                            MyApplacation.exec = Executors.newCachedThreadPool();
+//                            MyApplacation.tcpClient = new TcpClient("47.52.199.154", 49152, MyApplacation.context);
+//                            MyApplacation.exec.execute(MyApplacation.tcpClient);
+
+                            if (MyApplacation.tcpHelper == null) {
+                                MyApplacation applacation = new MyApplacation();
+                                applacation.startTCP();
+                            }
 
                             if (!TextUtils.isEmpty(u1.getData().getId())) {
                                 PATH_RSA = "uid=" + u1.getData().getId() + "&token=" + u1.getData().getToken();

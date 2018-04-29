@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.dq.yanglao.Interface.OnClickListenerSOS;
+import com.dq.yanglao.Interface.OnCallBackTCP;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.bean.DeviceInfo;
@@ -34,13 +34,16 @@ public class ForceExitReceiver extends BroadcastReceiver {
     String[] temp = null;
     String[] temp2 = null;
     String string, string2;
-    private static OnClickListenerSOS onClickListenerSOSs;
+    private static OnCallBackTCP mCallback;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
         msg = intent.getStringExtra("msg");
 
         string = msg.substring(1, msg.indexOf("]"));//去掉前后字符（中括号）
+
+        string2 = msg.substring(msg.indexOf(",") + 1);//获取第一个“，”之后的字符串
+
         temp = string.split(",");//以逗号拆分
 
         temp2 = temp[0].toString().split("\\*");
@@ -52,6 +55,8 @@ public class ForceExitReceiver extends BroadcastReceiver {
         System.out.println("555555555555 = " + temp2[3].toString());
 
         System.out.println("55555 = " + intent.getStringExtra("msg"));
+
+        System.out.println("string2 = " + string2);
 
     }
 
@@ -67,7 +72,8 @@ public class ForceExitReceiver extends BroadcastReceiver {
             case "APPLY":
                 //用户申请授权
                 //[DQHB*2*000A*APPLY,94,1]
-                onClickListenerSOSs.onClickSOS(temp[2]);
+//                mCallback.onCallback(temp[2]);
+                mCallback.onCallback(type, string2);
                 break;
             case "AUTH":
                 //主账号授权
@@ -86,36 +92,47 @@ public class ForceExitReceiver extends BroadcastReceiver {
                 break;
             case "CHECK":
                 //保持链路（心跳）
-                MyApplacation.tcpClient.send(msg);
+                //MyApplacation.tcpClient.send(msg);
+                MyApplacation.tcpHelper.SendString(msg);
                 break;
             //设置SOS号码
             case "SOS1":
-                onClickListenerSOSs.onClickSOS(temp2[3]);
+//                mCallback.onCallbackType(temp2[3]);
+                mCallback.onCallback(type, string2);
                 break;
             case "SOS2":
-                onClickListenerSOSs.onClickSOS(temp2[3]);
+//                mCallback.onCallbackType(temp2[3]);
+                mCallback.onCallback(type, string2);
                 break;
             case "SOS3":
-                onClickListenerSOSs.onClickSOS(temp2[3]);
+//                mCallback.onCallbackType(temp2[3]);
+                mCallback.onCallback(type, string2);
                 break;
             case "PHB":
-                onClickListenerSOSs.onClickSOS(type);
+//                mCallback.onCallbackType(type);
+                mCallback.onCallback(type, string2);
                 break;
 
             case "CALL":
                 //打电话
-                onClickListenerSOSs.onClickSOS(type);
+//                mCallback.onCallbackType(type);
+                mCallback.onCallback(type, string2);
                 break;
-
             case "hrtstart":
-                //心率
-                onClickListenerSOSs.onClickSOS(type);
+                //心率状态--[DQHB*1*000A*hrtstart,5]
+//                mCallback.onCallbackId(type,temp[1]);
+                mCallback.onCallback(type, string2);
+                break;
+            case "heart":
+                //心率结果--[DQHB*1*001D*heart,5,0,2018-04-29 11:09:16]
+//                mCallback.onCallBackHeart(type,temp[1],temp[2],temp[3]);
+                mCallback.onCallback(type, string2);
                 break;
         }
     }
 
-    public static void setOnClickListenerSOS(OnClickListenerSOS onClickListenerSOS) {
-        onClickListenerSOSs = onClickListenerSOS;
+    public static void setOnClickListenerSOS(OnCallBackTCP onClickListenerSOS) {
+        mCallback = onClickListenerSOS;
     }
 
     /**
@@ -172,8 +189,8 @@ public class ForceExitReceiver extends BroadcastReceiver {
         View view = LayoutInflater.from(activity).inflate(R.layout.dialog_shouquan, null);
         bottomDialog.setContentView(view);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-        params.width = activity.getResources().getDisplayMetrics().widthPixels - DensityUtil.dp2px(activity, 16f);
-        params.bottomMargin = DensityUtil.dp2px(activity, 8f);
+        params.width = activity.getResources().getDisplayMetrics().widthPixels - DensityUtil.dp2px(activity, 60f);
+        params.bottomMargin = DensityUtil.dp2px(activity, 60f);
         view.setLayoutParams(params);
         bottomDialog.getWindow().setGravity(Gravity.CENTER);
 
@@ -206,7 +223,8 @@ public class ForceExitReceiver extends BroadcastReceiver {
             public void onClick(View v) {
                 ToastUtils.getInstance(MyApplacation.context).showMessage("拒绝");
                 //[DQHB*用户id*LEN*AUTH,id,状态]
-                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(MyApplacation.context, "uid") + "*16*AUTH," + id + ",0]");
+//                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(MyApplacation.context, "uid") + "*16*AUTH," + id + ",0]");
+                MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(MyApplacation.context, "uid") + "*16*AUTH," + id + ",0]");
                 bottomDialog.dismiss();
             }
         });
@@ -215,7 +233,8 @@ public class ForceExitReceiver extends BroadcastReceiver {
             @Override
             public void onClick(View v) {
                 ToastUtils.getInstance(MyApplacation.context).showMessage("同意");
-                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(MyApplacation.context, "uid") + "*16*AUTH," + id + ",1]");
+//                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(MyApplacation.context, "uid") + "*16*AUTH," + id + ",1]");
+                MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(MyApplacation.context, "uid") + "*16*AUTH," + id + ",1]");
                 bottomDialog.dismiss();
             }
         });

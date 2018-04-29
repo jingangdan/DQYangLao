@@ -1,14 +1,12 @@
 package com.dq.yanglao.ui;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.dq.yanglao.Interface.OnClickListenerSOS;
+import com.dq.yanglao.Interface.OnCallBackTCP;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseActivity;
@@ -40,7 +38,7 @@ import butterknife.OnClick;
  * Created by jingang on 2018/4/24.
  */
 
-public class NoLoginActivity extends MyBaseActivity implements OnClickListenerSOS {
+public class NoLoginActivity extends MyBaseActivity implements OnCallBackTCP {
     @Bind(R.id.butJoin)
     Button butJoin;
     @Bind(R.id.editJoin)
@@ -81,23 +79,23 @@ public class NoLoginActivity extends MyBaseActivity implements OnClickListenerSO
     }
 
     @Override
-    public void onClickSOS(String msg) {
-        System.out.println("aaaaaaaaaaaaaa = "+msg);
-
-        if (msg.equals("1")) {
-            // showMessage("绑定成功");
-            String PATH_RSA = "uid=" + SPUtils.getPreference(this, "uid") + "&token=" + SPUtils.getPreference(this, "token");
-            try {
-                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
-                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
-                getDevice(Base64Utils.encode(encryptByte).toString());
-            } catch (Exception e) {
-                e.printStackTrace();
+    public void onCallback(String type, String msg) {
+        if(!TextUtils.isEmpty(msg)){
+            String[] temp = null;
+            temp = msg.split(",");//以逗号拆分
+            if(temp[1].equals("1")){
+                String PATH_RSA = "uid=" + SPUtils.getPreference(this, "uid") + "&token=" + SPUtils.getPreference(this, "token");
+                try {
+                    PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                    byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                    getDevice(Base64Utils.encode(encryptByte).toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        if (msg.equals("0")) {
-            showMessage("绑定失败");
-
+            if (temp[1].equals("0")) {
+                showMessage("绑定失败");
+            }
         }
     }
 
@@ -128,7 +126,8 @@ public class NoLoginActivity extends MyBaseActivity implements OnClickListenerSO
                                 ScreenManagerUtils.getInstance().removeActivity(NoLoginActivity.this);
                             }
                             if (device.getData().getIs_primary() == 0) {
-                                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(NoLoginActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
+//                                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(NoLoginActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
+                                MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(NoLoginActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
                             }
                         }
 

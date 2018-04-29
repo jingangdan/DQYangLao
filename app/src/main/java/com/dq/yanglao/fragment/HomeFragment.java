@@ -1,6 +1,5 @@
 package com.dq.yanglao.fragment;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.dq.yanglao.Interface.OnClickListenerSOS;
+import com.dq.yanglao.Interface.OnCallBackTCP;
 import com.dq.yanglao.Interface.OnClickListeners;
 import com.dq.yanglao.Interface.OnItemClickListener;
 import com.dq.yanglao.Interface.OnItemClickListenerHeather;
@@ -31,12 +30,10 @@ import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseFragment;
 import com.dq.yanglao.ui.ChatingActivity;
 import com.dq.yanglao.ui.EquipmentActivity;
-import com.dq.yanglao.ui.MainActivity;
 import com.dq.yanglao.ui.TelephoneActivity;
 import com.dq.yanglao.utils.DensityUtil;
 import com.dq.yanglao.utils.ForceExitReceiver;
 import com.dq.yanglao.utils.SPUtils;
-import com.dq.yanglao.utils.ScreenManagerUtils;
 import com.dq.yanglao.utils.ToastUtils;
 import com.dq.yanglao.view.rollpagerview.ImageLoopAdapter;
 import com.dq.yanglao.view.rollpagerview.RollPagerView;
@@ -54,8 +51,7 @@ import butterknife.OnClick;
  * 首页
  * Created by jingang on 2018/4/12.
  */
-
-public class HomeFragment extends MyBaseFragment implements OnClickListenerSOS {
+public class HomeFragment extends MyBaseFragment implements OnCallBackTCP {
     @Bind(R.id.rollPagerView)
     RollPagerView rollPagerView;
     @Bind(R.id.rvHomeMenu)
@@ -70,12 +66,15 @@ public class HomeFragment extends MyBaseFragment implements OnClickListenerSOS {
     private OnItemClickListenerHeather onItemClickListenerHeather;//2、定义接口成员变量
     private RVAdapter1 rVAdapter1;
     private RVAdapter2 rVAdapter2;
+    private String uid, deviceid;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fm_home, null);
         ButterKnife.bind(this, view);
+        uid = SPUtils.getPreference(getActivity(), "uid");
+        deviceid = SPUtils.getPreference(getActivity(), "deviceid");
 
         initData();
 
@@ -145,7 +144,8 @@ public class HomeFragment extends MyBaseFragment implements OnClickListenerSOS {
                                 if (!TextUtils.isEmpty(editText.getText().toString().trim())) {
                                     if (isMobile(editText.getText().toString().trim())) {
                                         //[DQHB*uid*LEN*CALL,device_id,号码]
-                                        MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(getActivity(), "uid") + "*16*CALL," + SPUtils.getPreference(getActivity(), "deviceid") + "," + editText.getText().toString().trim() + "]");
+                                        //MyApplacation.tcpClient.send("[DQHB*" + uid + "*16*CALL," + deviceid + "," + editText.getText().toString().trim() + "]");
+                                        MyApplacation.tcpHelper.SendString("[DQHB*" + uid + "*16*CALL," + deviceid + "," + editText.getText().toString().trim() + "]");
                                         bottomDialog.dismiss();
                                     } else {
                                         ToastUtils.getInstance(getActivity()).showMessage("请输入正确的电话号码");
@@ -228,8 +228,12 @@ public class HomeFragment extends MyBaseFragment implements OnClickListenerSOS {
     }
 
     @Override
-    public void onClickSOS(String msg) {
-        System.out.println("hone = " + msg);
+    public void onCallback(String type, String msg) {
+        if (msg.equals("CALL")) {
+            ToastUtils.getInstance(getActivity()).showMessage("通话请求发出");
+        } else {
+            ToastUtils.getInstance(getActivity()).showMessage("通话请求未发出");
+        }
     }
 
     private class RVAdapter1 extends RecyclerView.Adapter<RVAdapter1.MyViewHolder> {

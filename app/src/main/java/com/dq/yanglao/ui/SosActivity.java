@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.dq.yanglao.Interface.OnClickListenerSOS;
+import com.dq.yanglao.Interface.OnCallBackTCP;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseActivity;
@@ -34,7 +34,7 @@ import butterknife.OnClick;
  * Created by jingang on 2018/4/26.
  */
 
-public class SosActivity extends MyBaseActivity implements OnClickListenerSOS {
+public class SosActivity extends MyBaseActivity implements OnCallBackTCP {
     @Bind(R.id.editSos1)
     EditText editSos1;
     @Bind(R.id.editSos2)
@@ -67,23 +67,29 @@ public class SosActivity extends MyBaseActivity implements OnClickListenerSOS {
 
         if (!TextUtils.isEmpty(phone1)) {
             //[DQHB*uid*LEN*SOS1,device_id,号码]
-            MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*SOS1," + SPUtils.getPreference(this, "deviceid") + "," + phone1 + "]");
+//            MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*SOS1," + SPUtils.getPreference(this, "deviceid") + "," + phone1 + "]");
+            MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*SOS1," + SPUtils.getPreference(this, "deviceid") + "," + phone1 + "]");
+
         }
         if (!TextUtils.isEmpty(phone2)) {
             //[DQHB*uid*LEN*SOS1,device_id,号码]
-            MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*SOS2," + SPUtils.getPreference(this, "deviceid") + "," + phone2 + "]");
+//            MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*SOS2," + SPUtils.getPreference(this, "deviceid") + "," + phone2 + "]");
+            MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*SOS2," + SPUtils.getPreference(this, "deviceid") + "," + phone2 + "]");
+
         }
 
         if (!TextUtils.isEmpty(phone3)) {
             //[DQHB*uid*LEN*SOS1,device_id,号码]
-            MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*SOS3," + SPUtils.getPreference(this, "deviceid") + "," + phone3 + "]");
+//            MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*SOS3," + SPUtils.getPreference(this, "deviceid") + "," + phone3 + "]");
+            MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*SOS3," + SPUtils.getPreference(this, "deviceid") + "," + phone3 + "]");
+
         }
 
     }
 
     @Override
-    public void onClickSOS(String msg) {
-        if (msg.equals("SOS1") || msg.equals("SOS2") || msg.equals("SOS3")) {
+    public void onCallback(String type, String msg) {
+        if (type.equals("SOS1") || type.equals("SOS2") || type.equals("SOS3")) {
             showMessage("设置成功");
         } else {
             showMessage("设置失败");
@@ -152,4 +158,6 @@ public class SosActivity extends MyBaseActivity implements OnClickListenerSOS {
                     }
                 });
     }
+
+
 }

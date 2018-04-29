@@ -91,14 +91,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:text="设备地址11111111111111111111111111111"
+                android:text="设备地址：山东省临沂市兰山区银雀山街道77号"
                 android:textSize="12dp" />
 
             <TextView
                 style="@style/text_color2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="更新日期"
+                android:text="更新时间：2018-04-29"
                 android:textSize="12dp" />
         </LinearLayout>
 
