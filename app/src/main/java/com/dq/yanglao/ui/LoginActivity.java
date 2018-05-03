@@ -2,6 +2,7 @@ package com.dq.yanglao.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,8 +12,10 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -70,6 +73,9 @@ public class LoginActivity extends MyBaseActivity {
     @Bind(R.id.tvForgetPwd)
     TextView tvForgetPwd;
 
+    @Bind(R.id.lin_login_main)
+    LinearLayout linLoginMain;
+
     private LoginActivity TAG = LoginActivity.this;
 
     private TextWatcher phone_watcher, pwd_watcher;
@@ -91,6 +97,15 @@ public class LoginActivity extends MyBaseActivity {
         etLoginPwd.addTextChangedListener(pwd_watcher);
 
 //        tvRes.setOnClickListener(new OnClickListener());
+
+        //关闭软键盘
+        linLoginMain.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                hideKeyboard();
+                return true;
+            }
+        });
 
     }
 
@@ -349,6 +364,16 @@ public class LoginActivity extends MyBaseActivity {
 
                     }
                 });
+    }
+
+    /*强制关闭软键盘*/
+    private void hideKeyboard() {
+        @SuppressLint("WrongConstant") InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm.isActive() && this.getCurrentFocus() != null) {
+            if (this.getCurrentFocus().getWindowToken() != null) {
+                imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }
     }
 
 

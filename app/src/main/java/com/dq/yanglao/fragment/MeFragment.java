@@ -12,8 +12,11 @@ import android.widget.LinearLayout;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseFragment;
+import com.dq.yanglao.ui.ACTActivity;
 import com.dq.yanglao.ui.DeviceActivity;
+import com.dq.yanglao.ui.DeviceOffActivity;
 import com.dq.yanglao.ui.LoginActivity;
+import com.dq.yanglao.ui.ProfileActivity;
 import com.dq.yanglao.ui.SosActivity;
 import com.dq.yanglao.utils.DialogUtils;
 import com.dq.yanglao.utils.SPUtils;
@@ -34,6 +37,12 @@ public class MeFragment extends MyBaseFragment {
     Button butMeOut;
     @Bind(R.id.linMeDevice)
     LinearLayout linMeDevice;
+    @Bind(R.id.linMeProfile)
+    LinearLayout linMeProfile;
+    @Bind(R.id.linMeACT)
+    LinearLayout linMeACT;
+    @Bind(R.id.linMeDeviceOff)
+    LinearLayout linMeDeviceOff;
 
     @Nullable
     @Override
@@ -44,7 +53,7 @@ public class MeFragment extends MyBaseFragment {
         return view;
     }
 
-    @OnClick({R.id.linMeSOS, R.id.butMeOut, R.id.linMeDevice})
+    @OnClick({R.id.linMeSOS, R.id.butMeOut, R.id.linMeDevice, R.id.linMeProfile, R.id.linMeACT, R.id.linMeDeviceOff})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.linMeSOS:
@@ -75,8 +84,18 @@ public class MeFragment extends MyBaseFragment {
 
                     }
                 });
-
-
+                break;
+            case R.id.linMeProfile:
+                //情景模式
+                startActivity(new Intent(getActivity(), ProfileActivity.class));
+                break;
+            case R.id.linMeACT:
+                //短信提醒设置
+                startActivity(new Intent(getActivity(), ACTActivity.class));
+                break;
+            case R.id.linMeDeviceOff:
+                //远程关机
+                startActivity(new Intent(getActivity(), DeviceOffActivity.class));
                 break;
         }
 

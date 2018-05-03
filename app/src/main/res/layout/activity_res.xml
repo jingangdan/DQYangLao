@@ -112,7 +112,7 @@
             style="@style/text_color4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="注：请勿使用设备的SIM卡号码进行注册" />
+            android:text="注：请勿使用设备的SIM卡号码进行注册/修改密码" />
 
 
     </LinearLayout>
@@ -142,6 +142,7 @@
                 style="@style/edit_color3"
                 android:layout_width="match_parent"
                 android:hint="请输入家人/本机号码"
+                android:inputType="number"
                 android:padding="5dp" />
 
         </LinearLayout>
@@ -221,6 +222,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:hint="请输入验证码"
+                android:inputType="number"
                 android:padding="5dp"
                 android:textSize="12dp" />
 
@@ -228,7 +230,7 @@
                 android:id="@+id/butResCode"
                 style="@style/text_color3"
                 android:layout_height="36dp"
-                android:background="@drawable/kuang_grad"
+                android:background="@drawable/kuang_red"
                 android:text="获取验证码"
                 android:textSize="12dp" />
 
@@ -252,8 +254,8 @@
                 style="@style/text_color3"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:background="@drawable/kuang_grad"
-                android:text="下一步" />
+                android:background="@drawable/kuang_red"
+                android:text="注册" />
 
         </LinearLayout>
 

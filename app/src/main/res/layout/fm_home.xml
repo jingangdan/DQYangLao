@@ -47,7 +47,6 @@
                 android:textSize="12dp" />
 
         </LinearLayout>
-        bv fg
     </RelativeLayout>
 
     <com.dq.yanglao.view.rollpagerview.RollPagerView

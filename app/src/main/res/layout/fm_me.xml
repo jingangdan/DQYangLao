@@ -40,97 +40,199 @@
 
         </LinearLayout>
 
-
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linMeSOS"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bg1"
-        android:gravity="center"
-        android:padding="10dp">
+        android:scrollbars="none">
 
-        <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginRight="5dp"
-            android:src="@mipmap/ic_launcher" />
-
-        <TextView
-            style="@style/text_color1"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="SOS/亲情号码" />
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linMeSOS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg1"
+                android:gravity="center"
+                android:padding="10dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/ic_act001" />
 
-    <LinearLayout
-        android:id="@+id/linMeDevice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bg1"
-        android:gravity="center"
-        android:padding="10dp">
+                <TextView
+                    style="@style/text_color1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SOS/亲情号码" />
 
-        <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginRight="5dp"
-            android:src="@mipmap/ic_launcher" />
+            </LinearLayout>
 
-        <TextView
-            style="@style/text_color1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="设备列表" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
 
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linMeDevice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg1"
+                android:gravity="center"
+                android:padding="10dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/ic_me_menu001" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bg1"
-        android:gravity="center"
-        android:padding="10dp">
+                <TextView
+                    style="@style/text_color1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="设备列表" />
 
-        <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginRight="5dp"
-            android:src="@mipmap/ic_launcher" />
+            </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="家庭成员" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg1"
+                android:gravity="center"
+                android:padding="10dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/ic_me_menu002" />
 
-        <Button
-            android:id="@+id/butMeOut"
-            style="@style/text_color3"
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:background="@drawable/kuang_red"
-            android:text="退出登录" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="家庭成员" />
 
-    </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+
+            <LinearLayout
+                android:id="@+id/linMeProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg1"
+                android:gravity="center"
+                android:padding="10dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/ic_me_menu003" />
+
+                <TextView
+                    style="@style/text_color1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="情景模式" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="123" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+
+            <LinearLayout
+                android:id="@+id/linMeACT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg1"
+                android:gravity="center"
+                android:padding="10dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/ic_me_menu004" />
+
+                <TextView
+                    style="@style/text_color1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="短信提醒设置" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+
+            <LinearLayout
+                android:id="@+id/linMeDeviceOff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg1"
+                android:gravity="center"
+                android:padding="10dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/ic_me_menu005" />
+
+                <TextView
+                    style="@style/text_color1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="远程关机" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <Button
+                    android:id="@+id/butMeOut"
+                    style="@style/text_color3"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:background="@drawable/kuang_red"
+                    android:text="退出登录" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

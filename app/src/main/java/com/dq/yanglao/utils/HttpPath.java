@@ -18,6 +18,8 @@ public class HttpPath {
 
     public static final String USER_SENDSMS = PATH + "Api/User/sendsms?";//发送短信-验证码（mobile，type类型—-注册(register)—找回密码(repwd)）
 
+    public static final String USER_REPWD = PATH + "Api/User/repwd?";//找回密码(mobile,pwd,verify验证码)
+
     public static final String DEVICE_BIND = PATH + "Api/Device/bind?";//绑定设备（device，uid, token）
 
     public static final String DEVICE_UNBIND = PATH + "Api/Device/unbind?";//解绑设备（device，uid, token）

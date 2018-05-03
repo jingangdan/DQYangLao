@@ -1,12 +1,17 @@
 package com.dq.yanglao.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.dq.yanglao.Interface.OnCallBackTCP;
+import com.dq.yanglao.Interface.OnClickListeners;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseActivity;
@@ -22,6 +27,8 @@ import com.dq.yanglao.utils.HttpxUtils;
 import com.dq.yanglao.utils.RSAUtils;
 import com.dq.yanglao.utils.SPUtils;
 import com.dq.yanglao.utils.ScreenManagerUtils;
+import com.dq.yanglao.view.rollpagerview.ImageLoopAdapter;
+import com.dq.yanglao.view.rollpagerview.RollPagerView;
 
 import org.xutils.common.Callback;
 
@@ -39,6 +46,15 @@ import butterknife.OnClick;
  */
 
 public class NoLoginActivity extends MyBaseActivity implements OnCallBackTCP {
+    private NoLoginActivity TAG = NoLoginActivity.this;
+
+    @Bind(R.id.rpvNoLogin)
+    RollPagerView rollPagerView;
+    @Bind(R.id.butNoLoginOut)
+    Button butNoLoginOut;
+    @Bind(R.id.butNoLoginMap)
+    Button butNoLoginMap;
+
     @Bind(R.id.butJoin)
     Button butJoin;
     @Bind(R.id.editJoin)
@@ -53,37 +69,95 @@ public class NoLoginActivity extends MyBaseActivity implements OnCallBackTCP {
         setBaseContentView(R.layout.activity_nologin);
         ButterKnife.bind(this);
         setTvTitle("未绑定设备");
-        setIvBack();
+//        setIvBack();
+
+        initDate();
 
         ForceExitReceiver.setOnClickListenerSOS(this);
     }
 
-    @OnClick(R.id.butJoin)
-    public void onViewClicked() {
-        if (!TextUtils.isEmpty(editJoin.getText().toString().trim())) {
-            PATH_RSA = "device=" + editJoin.getText().toString().trim()
-                    + "&uid=" + SPUtils.getPreference(NoLoginActivity.this, "uid")
-                    + "&token=" + SPUtils.getPreference(NoLoginActivity.this, "token");
-            try {
-                PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
-                byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
-                // bind(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
-                xUtilsBind(Base64Utils.encode(encryptByte).toString());
-            } catch (Exception e) {
-                e.printStackTrace();
+    public void initDate() {
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        int width = dm.widthPixels;
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) rollPagerView.getLayoutParams();
+        params.height = width / 3;//宽高比 1:3
+        rollPagerView.setLayoutParams(params);
+
+        rollPagerView.setAdapter(new ImageLoopAdapter(rollPagerView, this));
+        rollPagerView.setOnItemClickListener(new OnClickListeners() {
+            @Override
+            public void onItemClick(int position) {
+
             }
-        } else {
-            showMessage("请填写设备号");
+        });
+    }
+
+    @OnClick({R.id.butNoLoginOut, R.id.butNoLoginMap, R.id.butJoin})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.butNoLoginOut:
+                //退出登录
+                DialogUtils.showDialog(TAG, "提示：", "确定要退出登录吗？", new DialogUtils.OnDialogListener() {
+                    @Override
+                    public void confirm() {
+                        SPUtils.savePreference(TAG, "isLogin", "0");//0 未登录  1已登录
+                        //SPUtils.savePreference(TAG, "isBind", "0");
+
+                        startActivity(new Intent(TAG, LoginActivity.class));
+                        ScreenManagerUtils.getInstance().removeActivity(TAG);
+
+                        MyApplacation.tcpHelper.closeTCP();
+                    }
+
+                    @Override
+                    public void cancel() {
+
+                    }
+                });
+                break;
+
+            case R.id.butNoLoginMap:
+                DialogUtils.showDialog(TAG, "提示：", "您的账号尚未绑定任何设备，去绑定吧！", new DialogUtils.OnDialogListener() {
+                    @Override
+                    public void confirm() {
+                        startActivity(new Intent(TAG, AddDeviceActivity.class));
+                    }
+
+                    @Override
+                    public void cancel() {
+
+                    }
+                });
+                break;
+
+            case R.id.butJoin:
+                if (!TextUtils.isEmpty(editJoin.getText().toString().trim())) {
+                    PATH_RSA = "device=" + editJoin.getText().toString().trim()
+                            + "&uid=" + SPUtils.getPreference(NoLoginActivity.this, "uid")
+                            + "&token=" + SPUtils.getPreference(NoLoginActivity.this, "token");
+                    try {
+                        PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                        byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                        // bind(URLEncoder.encode(Base64Utils.encode(encryptByte).toString(), "UTF-8"));
+                        xUtilsBind(Base64Utils.encode(encryptByte).toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    showMessage("请填写设备号");
+                }
+                break;
         }
+
 
     }
 
     @Override
     public void onCallback(String type, String msg) {
-        if(!TextUtils.isEmpty(msg)){
+        if (!TextUtils.isEmpty(msg)) {
             String[] temp = null;
             temp = msg.split(",");//以逗号拆分
-            if(temp[1].equals("1")){
+            if (temp[1].equals("1")) {
                 String PATH_RSA = "uid=" + SPUtils.getPreference(this, "uid") + "&token=" + SPUtils.getPreference(this, "token");
                 try {
                     PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);

@@ -192,6 +192,24 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
+        <!--我的-情景模式-->
+        <activity
+            android:name=".ui.ProfileActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <!--我的-短信提醒设置-->
+        <activity
+            android:name=".ui.ACTActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <!--我的-远程关机-->
+        <activity
+            android:name=".ui.DeviceOffActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
         <activity
             android:name=".ui.TestActivity"
             android:screenOrientation="portrait"

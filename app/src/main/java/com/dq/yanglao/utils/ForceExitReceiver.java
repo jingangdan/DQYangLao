@@ -42,7 +42,7 @@ public class ForceExitReceiver extends BroadcastReceiver {
 
         string = msg.substring(1, msg.indexOf("]"));//去掉前后字符（中括号）
 
-        string2 = msg.substring(msg.indexOf(",") + 1);//获取第一个“，”之后的字符串
+        string2 = string.substring(string.indexOf(",") + 1);//获取第一个“，”之后的字符串
 
         temp = string.split(",");//以逗号拆分
 
@@ -109,6 +109,7 @@ public class ForceExitReceiver extends BroadcastReceiver {
                 mCallback.onCallback(type, string2);
                 break;
             case "PHB":
+                //设置通讯录/电话本
 //                mCallback.onCallbackType(type);
                 mCallback.onCallback(type, string2);
                 break;
@@ -128,9 +129,15 @@ public class ForceExitReceiver extends BroadcastReceiver {
 //                mCallback.onCallBackHeart(type,temp[1],temp[2],temp[3]);
                 mCallback.onCallback(type, string2);
                 break;
+
+            case "UD":
+                //定位 [DQHB*1*001A*UD,5,35.065287,118.3212733]
+                mCallback.onCallback(type, string2);
+                break;
         }
     }
 
+    /*回调方法*/
     public static void setOnClickListenerSOS(OnCallBackTCP onClickListenerSOS) {
         mCallback = onClickListenerSOS;
     }

@@ -51,7 +51,7 @@ public class SosActivity extends MyBaseActivity implements OnCallBackTCP {
         super.onCreate(savedInstanceState);
         setBaseContentView(R.layout.activity_sos);
         ButterKnife.bind(this);
-        setTvTitle("亲亲号码");
+        setTvTitle("SOS/亲情号码");
         setIvBack();
         ForceExitReceiver.setOnClickListenerSOS(this);
 

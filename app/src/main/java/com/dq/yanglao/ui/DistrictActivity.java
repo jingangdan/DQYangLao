@@ -144,6 +144,8 @@ public class DistrictActivity extends MyBaseActivity implements
         markerOption = new MarkerOptions().draggable(true);
         init();
 
+        addFence();
+
     }
 
     void init() {
@@ -593,18 +595,21 @@ public class DistrictActivity extends MyBaseActivity implements
      * @since 3.2.0
      */
     private void addRoundFence() {
-        String customId = etCustomId.getText().toString();
-        String radiusStr = etRadius.getText().toString();
-        if (null == centerLatLng
-                || TextUtils.isEmpty(radiusStr)) {
-            Toast.makeText(getApplicationContext(), "参数不全", Toast.LENGTH_SHORT)
-                    .show();
-            return;
-        }
+//        String customId = etCustomId.getText().toString();
+//        String radiusStr = etRadius.getText().toString();
+//        if (null == centerLatLng
+//                || TextUtils.isEmpty(radiusStr)) {
+//            Toast.makeText(getApplicationContext(), "参数不全", Toast.LENGTH_SHORT)
+//                    .show();
+//            return;
+//        }
 
-        DPoint centerPoint = new DPoint(centerLatLng.latitude,
-                centerLatLng.longitude);
-        fenceRadius = Float.parseFloat(radiusStr);
-        fenceClient.addGeoFence(centerPoint, fenceRadius, customId);
+//        DPoint centerPoint = new DPoint(centerLatLng.latitude,
+//                centerLatLng.longitude);
+//        fenceRadius = Float.parseFloat(radiusStr);
+//        fenceClient.addGeoFence(centerPoint, fenceRadius, customId);
+        DPoint centerPoint = new DPoint(35.065287, 118.3212733);
+        fenceRadius = 500;
+        fenceClient.addGeoFence(centerPoint, fenceRadius, "测试围栏");
     }
 }

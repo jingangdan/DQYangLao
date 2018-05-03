@@ -1,9 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical">
+
+    <com.dq.yanglao.view.rollpagerview.RollPagerView
+        android:id="@+id/rpvNoLogin"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        app:rollviewpager_play_delay="2000">
+
+    </com.dq.yanglao.view.rollpagerview.RollPagerView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <Button
+                style="@style/text_color3"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/kuang_red"
+                android:text="微聊" />
+
+            <Button
+                style="@style/text_color3"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/kuang_red"
+                android:text="通话" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <Button
+                android:id="@+id/butNoLoginMap"
+                style="@style/text_color3"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/kuang_red"
+                android:text="地图" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <Button
+            style="@style/text_color3"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/kuang_red"
+            android:text="电话本" />
+
+        <Button
+            style="@style/text_color3"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/kuang_red"
+            android:text="吃药提醒" />
+
+        <Button
+            style="@style/text_color3"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/kuang_red"
+            android:text="安全区域" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <Button
+            style="@style/text_color3"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/kuang_red"
+            android:text="记步" />
+
+        <Button
+            style="@style/text_color3"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/kuang_red"
+            android:text="心率" />
+
+        <Button
+            style="@style/text_color3"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/kuang_red"
+            android:text="睡眠" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <Button
+            style="@style/text_color3"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/kuang_red"
+            android:text="家庭成员" />
+
+        <Button
+            android:id="@+id/butNoLoginOut"
+            style="@style/text_color3"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/kuang_red"
+            android:text="退出登录" />
+
+    </LinearLayout>
 
     <EditText
         android:id="@+id/editJoin"
@@ -11,7 +176,8 @@
         android:layout_height="wrap_content"
         android:hint="请输入设备号"
         android:text="3925333600"
-        android:textSize="26dp" />
+        android:textSize="26dp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/butJoin"
@@ -19,6 +185,7 @@
         android:layout_height="wrap_content"
         android:text="立即绑定"
         android:textColor="@color/main_color"
-        android:textSize="32dp" />
+        android:textSize="32dp"
+        android:visibility="gone" />
 
 </LinearLayout>

@@ -23,6 +23,7 @@ import com.dq.yanglao.base.MyBaseActivity;
 import com.dq.yanglao.fragment.FindFragment;
 import com.dq.yanglao.fragment.HealthyFragment;
 import com.dq.yanglao.fragment.HomeFragment;
+import com.dq.yanglao.fragment.Location2Fragment;
 import com.dq.yanglao.fragment.LocationFragment;
 import com.dq.yanglao.fragment.MeFragment;
 
@@ -79,7 +80,7 @@ public class MainActivity extends MyBaseActivity {
 
     private HomeFragment homeFragment;
     private HealthyFragment healthyFragment;
-    private LocationFragment locationFragment;
+    private Location2Fragment locationFragment;
     private FindFragment findFragment;
     private MeFragment meFragment;
     private Fragment[] fragments;
@@ -107,7 +108,7 @@ public class MainActivity extends MyBaseActivity {
     public void initData() {
         homeFragment = new HomeFragment();
         healthyFragment = new HealthyFragment();
-        locationFragment = new LocationFragment();
+        locationFragment = new Location2Fragment();
         findFragment = new FindFragment();
         meFragment = new MeFragment();
         meFragment = new MeFragment();
