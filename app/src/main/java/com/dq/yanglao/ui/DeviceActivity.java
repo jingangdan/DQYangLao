@@ -29,6 +29,7 @@ import com.dq.yanglao.utils.HttpPath;
 import com.dq.yanglao.utils.HttpxUtils;
 import com.dq.yanglao.utils.RSAUtils;
 import com.dq.yanglao.utils.SPUtils;
+import com.dq.yanglao.utils.ScreenManagerUtils;
 import com.dq.yanglao.view.SwipeView;
 
 import org.xutils.common.Callback;
@@ -111,8 +112,12 @@ public class DeviceActivity extends MyBaseActivity {
                                 deviceList.addAll(deviceGet.getData());
                                 mAdapter.notifyDataSetChanged();
                             } else {
+                                deviceList.clear();
+                                mAdapter.notifyDataSetChanged();
                                 SPUtils.savePreference(DeviceActivity.this, "isBind", "0");//0 未绑定  1已绑定
                                 SPUtils.savePreference(DeviceActivity.this, "deviceid", "");//记录deviceid
+                                goToActivity(NoLoginActivity.class);
+                                ScreenManagerUtils.getInstance().clearActivityStack();
                             }
 
                         }
@@ -167,7 +172,9 @@ public class DeviceActivity extends MyBaseActivity {
 
         @Override
         public void onBindViewHolder(DeviceAdapter.ViewHolder holder, final int position) {
-            holder.tvCode.setText(dataList.get(position).getDevice().getDevice());
+//            if(dataList.get(position).getDevice().getDevice())
+            holder.tvName.setText(dataList.get(position).getRelation());
+            holder.tvCode.setText("设备号：" + dataList.get(position).getDevice().getDevice());
 
             if (SPUtils.getPreference(mContext, "deviceid").equals(dataList.get(position).getDevice().getId())) {
                 dataList.get(position).setDefault(true);

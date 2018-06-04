@@ -1,5 +1,6 @@
 package com.dq.yanglao.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -12,7 +13,20 @@ import com.dq.yanglao.Interface.OnCallBackTCP;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseActivity;
+import com.dq.yanglao.bean.DeviceSetting;
+import com.dq.yanglao.utils.Base64Utils;
+import com.dq.yanglao.utils.CodeUtils;
+import com.dq.yanglao.utils.GsonUtil;
+import com.dq.yanglao.utils.HttpPath;
+import com.dq.yanglao.utils.HttpxUtils;
+import com.dq.yanglao.utils.RSAUtils;
 import com.dq.yanglao.utils.SPUtils;
+
+import org.xutils.common.Callback;
+
+import java.security.PrivateKey;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -43,7 +57,8 @@ public class ProfileActivity extends MyBaseActivity implements OnCallBackTCP {
     @Bind(R.id.butProfile)
     Button butProfile;
 
-    private String profile;
+    private String profile, profile_msg;
+    private String val;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,35 +67,52 @@ public class ProfileActivity extends MyBaseActivity implements OnCallBackTCP {
         ButterKnife.bind(this);
         setTvTitle("情景模式");
         setIvBack();
+
+        getDeviceSetting();
     }
 
-    @OnClick({R.id.linProfile1, R.id.linProfile2, R.id.linProfile3, R.id.linProfile4, R.id.butProfile})
+    @OnClick({R.id.linProfile1, R.id.linProfile2, R.id.linProfile3, R.id.linProfile4})
     public void onViewClicked(View view) {
         setClearSelect();
         switch (view.getId()) {
             case R.id.linProfile1:
                 ivProfile1.setVisibility(View.VISIBLE);
                 profile = "1";
+                profile_msg = "震动加响铃";
                 break;
             case R.id.linProfile2:
                 ivProfile2.setVisibility(View.VISIBLE);
                 profile = "2";
+                profile_msg = "响铃";
                 break;
             case R.id.linProfile3:
                 ivProfile3.setVisibility(View.VISIBLE);
                 profile = "3";
+                profile_msg = "震动";
                 break;
             case R.id.linProfile4:
                 ivProfile4.setVisibility(View.VISIBLE);
                 profile = "4";
+                profile_msg = "静音";
                 break;
-            case R.id.butProfile:
-                //[DQHB*uid*LEN*profile,设备id,模式]
-                if (!TextUtils.isEmpty(profile)) {
-                    MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*profile," + SPUtils.getPreference(this, "deviceid" + "," + profile + "]"));
-                }
-                break;
+//            case R.id.butProfile:
+//                //[DQHB*uid*LEN*profile,设备id,模式]
+//                if (!TextUtils.isEmpty(profile)) {
+//                    MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*profile," + SPUtils.getPreference(this, "deviceid") + "," + profile + "]");
+//                }
+//                System.out.println("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*profile," + SPUtils.getPreference(this, "deviceid") + "," + profile + "]");
+//                break;
         }
+    }
+
+    @OnClick(R.id.butProfile)
+    public void onViewClicked() {
+        //[DQHB*uid*LEN*profile,设备id,模式]
+        if (!TextUtils.isEmpty(profile)) {
+            MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*profile," + SPUtils.getPreference(this, "deviceid") + "," + profile + "]");
+        }
+        System.out.println("[DQHB*" + SPUtils.getPreference(this, "uid") + "*16*profile," + SPUtils.getPreference(this, "deviceid") + "," + profile + "]");
+
     }
 
     private void setClearSelect() {
@@ -90,8 +122,87 @@ public class ProfileActivity extends MyBaseActivity implements OnCallBackTCP {
         ivProfile4.setVisibility(View.INVISIBLE);
     }
 
+    /*获取设备设置*/
+    public void getDeviceSetting() {
+        String PATH_RSA = "device_id=" + SPUtils.getPreference(this, "deviceid") + "&uid=" + SPUtils.getPreference(this, "uid") + "&token=" + SPUtils.getPreference(this, "token");
+        System.out.println("sos = " + PATH_RSA);
+        try {
+            PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+            byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+            xUtilsGetDeviceSetting(Base64Utils.encode(encryptByte).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取设备设置
+     *
+     * @param sign
+     */
+    public void xUtilsGetDeviceSetting(String sign) {
+        System.out.println("设备设置 = " + HttpPath.DEVICE_SETTING + "sign=" + sign);
+        Map<String, Object> map = new HashMap<>();
+        map.put("sign", sign);
+        HttpxUtils.Post(this,
+                HttpPath.DEVICE_SETTING,
+                map,
+                new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        System.out.println("设备设置 = " + result);
+                        DeviceSetting setting = GsonUtil.gsonIntance().gsonToBean(result, DeviceSetting.class);
+                        if (setting.getStatus() == 1) {
+                            val = setting.getData().get(5).getVal();
+                            if (!TextUtils.isEmpty(val)) {
+                                setProfile();
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
+    }
+
+    public void setProfile() {
+        if (val.equals("1")) {
+            ivProfile1.setVisibility(View.VISIBLE);
+        }
+        if (val.equals("2")) {
+            ivProfile2.setVisibility(View.VISIBLE);
+        }
+        if (val.equals("3")) {
+            ivProfile3.setVisibility(View.VISIBLE);
+        }
+        if (val.equals("4")) {
+            ivProfile4.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public void onCallback(String type, String msg) {
         System.out.println("msg = " + msg + "   type = " + type);
+        if (type.equals("profile")) {
+            showMessage("设置成功");
+            Intent intent = new Intent();
+            intent.putExtra("profile", profile_msg);
+            setResult(CodeUtils.ME_PROFILE);
+            ProfileActivity.this.finish();
+        }
     }
+
 }

@@ -14,7 +14,7 @@ import com.dq.yanglao.bean.PhbList;
 import java.util.List;
 
 /**
- * Created by asus on 2018/4/27.
+ * Created by jingang on 2018/4/27.
  */
 
 public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.MyViewHolder> {

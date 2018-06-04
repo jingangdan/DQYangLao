@@ -48,6 +48,7 @@
         app:layout_auto_basewidth="height" />
 
     <TextView
+        android:textColor="@color/bg1"
         android:id="@+id/title_tv_right"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/x88"
@@ -55,7 +56,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/x24"
         android:paddingRight="@dimen/x24"
-        android:textSize="@dimen/tv_36px"
+        android:textSize="14dp"
         android:visibility="gone"
         app:layout_auto_basewidth="height" />
 

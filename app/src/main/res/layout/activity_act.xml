@@ -27,14 +27,14 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linActSos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:background="@drawable/kuang_login_res"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -52,14 +52,11 @@
         <Switch
             android:id="@+id/switch1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:onClick="swtich1Click" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linActSms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -84,21 +81,19 @@
         <Switch
             android:id="@+id/switch2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:onClick="swtich1Click" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linActRemove"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:background="@drawable/kuang_login_res"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -116,21 +111,19 @@
         <Switch
             android:id="@+id/switch3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:onClick="swtich1Click" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linActRemoveSms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:background="@drawable/kuang_login_res"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -148,14 +141,11 @@
         <Switch
             android:id="@+id/switch4"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:onClick="swtich1Click" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linActPedo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -180,9 +170,7 @@
         <Switch
             android:id="@+id/switch5"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:onClick="swtich1Click" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

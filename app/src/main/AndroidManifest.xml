@@ -40,7 +40,6 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme,android:allowBackup">
@@ -66,6 +65,11 @@
             android:name="RONG_CLOUD_APP_KEY"
             android:value="k51hidwqkcvxb" />
 
+        <!-- 蒲公英更新 必选-->
+        <meta-data
+            android:name="PGYER_APPID"
+            android:value="7c661fd7b4bef66ee857650f1d8fb868"></meta-data>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.dq.yanglao"
@@ -75,6 +79,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/rc_file_path" />
         </provider>
+
+        <!--测试页-->
+        <activity
+            android:name=".ui.TestActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
         <!--启动页-->
         <activity
@@ -133,11 +143,17 @@
 
         <!--定位-地理围栏-->
         <activity
-            android:name=".ui.DistrictActivity"
+            android:name=".ui.DistrictActivityOld"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity
-            android:name=".ui.DistrictActivity2"
+            android:name=".ui.DistrictActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <!--添加围栏-->
+        <activity
+            android:name=".ui.AddDistricrActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
@@ -174,6 +190,24 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
+        <!--首页-吃药提醒-->
+        <activity
+            android:name=".ui.MedicineActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <!--首页-吃药提醒-编辑提醒-->
+        <activity
+            android:name=".ui.MedicineUpdateActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <!--首页-吃药提醒-编辑提醒-选择时间-->
+        <activity
+            android:name=".ui.MedicineUpdateTimeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
         <!--我的-SOS/亲情号码-->
         <activity
             android:name=".ui.SosActivity"
@@ -183,6 +217,12 @@
         <!--我的-设备列表-->
         <activity
             android:name=".ui.DeviceActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <!--我的-家庭成员-->
+        <activity
+            android:name=".ui.FamilyActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
@@ -210,8 +250,9 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
+        <!--我的-设置-->
         <activity
-            android:name=".ui.TestActivity"
+            android:name=".ui.SettingActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 

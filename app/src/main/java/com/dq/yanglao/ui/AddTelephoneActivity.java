@@ -46,7 +46,7 @@ public class AddTelephoneActivity extends MyBaseActivity implements OnCallBackTC
         super.onCreate(savedInstanceState);
         setBaseContentView(R.layout.activity_addtelephone);
         ButterKnife.bind(this);
-        setTvTitle("编辑联系人");
+        setTvTitle("添加联系人");
         setIvBack();
         getIntentResult();
 

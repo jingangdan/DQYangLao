@@ -21,12 +21,13 @@
             android:src="@mipmap/ic_home_header" />
 
         <ImageView
+            android:id="@+id/ivHomeDevice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_margin="5dp"
+            android:padding="5dp"
             android:src="@mipmap/ic_home_user" />
 
         <LinearLayout
@@ -38,13 +39,15 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvHomeDeviceName"
                 style="@style/text_color3"
                 android:text="设备名称" />
 
             <TextView
                 style="@style/text_color2"
                 android:text="设备电量"
-                android:textSize="12dp" />
+                android:textSize="12dp"
+                android:visibility="gone" />
 
         </LinearLayout>
     </RelativeLayout>

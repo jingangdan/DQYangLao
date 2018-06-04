@@ -12,6 +12,7 @@ import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.base.MyBaseActivity;
 import com.dq.yanglao.bean.DeviceBind;
+import com.dq.yanglao.bean.UserInfo2;
 import com.dq.yanglao.utils.Base64Utils;
 import com.dq.yanglao.utils.CodeUtils;
 import com.dq.yanglao.utils.ForceExitReceiver;
@@ -20,7 +21,10 @@ import com.dq.yanglao.utils.HttpPath;
 import com.dq.yanglao.utils.HttpxUtils;
 import com.dq.yanglao.utils.RSAUtils;
 import com.dq.yanglao.utils.SPUtils;
+import com.dq.yanglao.utils.ScreenManagerUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 
 import java.security.PrivateKey;
@@ -77,6 +81,8 @@ public class AddDeviceActivity extends MyBaseActivity implements OnCallBackTCP {
             isClick = true;
             //绑定
             String PATH_RSA = "device=" + editAddDeviceCode.getText().toString().trim()
+                    + "&nickname=" + editAddDeviceName.getText().toString().trim()
+                    + "&relation=" + editAddDeviceRelation.getText().toString().trim()
                     + "&uid=" + SPUtils.getPreference(this, "uid")
                     + "&token=" + SPUtils.getPreference(this, "token");
             System.out.println("adde = " + PATH_RSA);
@@ -107,29 +113,57 @@ public class AddDeviceActivity extends MyBaseActivity implements OnCallBackTCP {
                 new Callback.CommonCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
-                        isClick = false;
                         System.out.println("绑定设备 = " + result);
-                        final DeviceBind device = GsonUtil.gsonIntance().gsonToBean(result, DeviceBind.class);
-                        if (device.getStatus() == 1) {
-                            if (device.getData().getIs_primary() == 1) {
-                                //是主账号 绑定成功
-                                SPUtils.savePreference(AddDeviceActivity.this, "isBind", "1");//0 未绑定  1已绑定
-                                SPUtils.savePreference(AddDeviceActivity.this, "deviceid", device.getData().getDevice_id());//记录deviceid
+                        isClick = false;
+                        try {
+                            JSONObject json = new JSONObject(result);
+                            if (json.getInt("status") == 1) {
+                                final DeviceBind device = GsonUtil.gsonIntance().gsonToBean(result, DeviceBind.class);
+                                if (device.getData().getIs_primary() == 1) {
+                                    //是主账号 绑定成功
+                                    SPUtils.savePreference(AddDeviceActivity.this, "isBind", "1");//0 未绑定  1已绑定
+                                    SPUtils.savePreference(AddDeviceActivity.this, "deviceid", device.getData().getDevice_id());//记录deviceid
 
+                                    goToActivity(MainActivity.class);
+                                    ScreenManagerUtils.getInstance().removeActivity(AddDeviceActivity.this);
+                                }
+                                if (device.getData().getIs_primary() == 0) {
+                                    MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(AddDeviceActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
+                                    showMessage("发送成功，等待审核");
+                                }
+                            } else if (json.getInt("status") == 0) {
+                                showMessage(json.getString("data"));
                             }
-                            if (device.getData().getIs_primary() == 0) {
-//                                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(AddDeviceActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
-                                MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(AddDeviceActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
-                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+
+//                        final DeviceBind device = GsonUtil.gsonIntance().gsonToBean(result, DeviceBind.class);
+//                        if (device.getStatus() == 1) {
+//                            if (device.getData().getIs_primary() == 1) {
+//                                //是主账号 绑定成功
+//                                SPUtils.savePreference(AddDeviceActivity.this, "isBind", "1");//0 未绑定  1已绑定
+//                                SPUtils.savePreference(AddDeviceActivity.this, "deviceid", device.getData().getDevice_id());//记录deviceid
+//
+//                                goToActivity(MainActivity.class);
+//                                ScreenManagerUtils.getInstance().removeActivity(AddDeviceActivity.this);
+//
+//                            }
+//                            if (device.getData().getIs_primary() == 0) {
+////                                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(AddDeviceActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
+//                                MyApplacation.tcpHelper.SendString("[DQHB*" + SPUtils.getPreference(AddDeviceActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");
+//                                showMessage("发送成功，等待审核");
+//                                //AddDeviceActivity.this.finish();
+//                            }
+//                        }
 
                     }
 
                     @Override
                     public void onError(Throwable ex, boolean isOnCallback) {
                         isClick = false;
-//                        if (!TextUtils.isEmpty(bind_result)) {
-//                            UserInfo2 u2 = GsonUtil.gsonIntance().gsonToBean(bind_result, UserInfo2.class);
+//                        if (!TextUtils.isEmpty(string)) {
+//                            UserInfo2 u2 = new UserInfo2();
 //                            if (u2.getStatus() == 0) {
 //                                showMessage(u2.getData());
 //                            }
@@ -150,7 +184,7 @@ public class AddDeviceActivity extends MyBaseActivity implements OnCallBackTCP {
 
     @Override
     public void onCallback(String type, String msg) {
-        if(!TextUtils.isEmpty(msg)){
+        if (!TextUtils.isEmpty(msg)) {
             String[] temp = null;
             temp = msg.split(",");//以逗号拆分
             if (temp[1].equals("1")) {

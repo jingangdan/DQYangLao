@@ -13,6 +13,7 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:padding="@dimen/x15"
                 android:id="@+id/itemLinDevice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -24,7 +25,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@mipmap/ic_home_header" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -36,7 +37,7 @@
                         android:id="@+id/itemTvDevice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="名称" />
+                        android:text="设备" />
 
                     <TextView
                         android:id="@+id/itemTvCode"

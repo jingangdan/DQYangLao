@@ -48,8 +48,17 @@ public class DeviceGet {
         private String uid;
         private String is_primary;
         private String apply_status;
+        private String relation;
         private DeviceBean device;
         private boolean isDefault;
+
+        public String getRelation() {
+            return relation;
+        }
+
+        public void setRelation(String relation) {
+            this.relation = relation;
+        }
 
         public boolean isDefault() {
             return isDefault;
@@ -119,6 +128,44 @@ public class DeviceGet {
             private String device;
             private String status;
             private String connect_id;
+
+
+            private String code;
+            private String imei;
+            private String technology;
+            private String elder_id;
+
+            public String getCode() {
+                return code;
+            }
+
+            public void setCode(String code) {
+                this.code = code;
+            }
+
+            public String getImei() {
+                return imei;
+            }
+
+            public void setImei(String imei) {
+                this.imei = imei;
+            }
+
+            public String getTechnology() {
+                return technology;
+            }
+
+            public void setTechnology(String technology) {
+                this.technology = technology;
+            }
+
+            public String getElder_id() {
+                return elder_id;
+            }
+
+            public void setElder_id(String elder_id) {
+                this.elder_id = elder_id;
+            }
 
             public String getId() {
                 return id;

@@ -8,7 +8,7 @@ package com.dq.yanglao.utils;
 public class HttpPath {
     //public static final String PATH = "http://192.168.0.128/";//接口地址
 
-    public static final String PATH = "http://oa.dequanwww.com/";//接口地址
+    public static final String PATH = "http://yanglao.dequanhuibao.com/";//接口地址
 
     public static final String USER_LOGIN = PATH + "Api/User/login?";//用户登录(phone,pwd)
 
@@ -33,5 +33,23 @@ public class HttpPath {
     public static final String DEVICE_GETPHB = PATH + "Api/Device/getphb?";//获取设备通讯录(device_id,uid,token)
 
     public static final String DEVICE_HEART = PATH + "Api/Device/getlastheart?";//获取上次检测心率(device_id,uid,token)
+
+    public static final String DEVICE_SETTING = PATH + "Api/Device/getsetting?";//获取设备设置（uid, token, device_id）
+
+    public static final String DEVICE_STEP = PATH + "Api/Device/getstep?";//根据时间获取步数(uid, token, device_id,date)
+
+    public static final String DEVICE_GETFENCE = PATH + "Api/Device/getfence?";//获取设备围栏（uid, token, device_id）
+
+    public static final String DEVICE_SETFENCE = PATH + "Api/Device/setfence?";//设置围栏（uid, token, device_id，lat,lng,redii）
+
+    public static final String DEVICE_GETLIST = PATH + "Api/Device/getlist?";//获取用户所有绑定用户（uid, token, device_id）
+
+    public static final String DEVICE_GETDINFO = PATH + "Api/Device/getdinfo?";//获取设备老人信息（uid, token, device_id）
+
+    public static final String DEVICE_SETDINFO = PATH + "Api/Device/setdinfo?";//设置老人信息（uid, token, device_id）
+
+    public static final String DEVICE_UPIMG = PATH + "Api/Device/upimg?";//上传图片（uid, token, $_FILE[‘image’]）
+
+    public static final String DEVICE_GETUINFO = PATH + "Api/Device/getuinfo?";//获取用户信息（uid, token）
 
 }

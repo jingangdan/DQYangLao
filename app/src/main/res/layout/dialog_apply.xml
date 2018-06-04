@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/kuang_login_res"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tvDialogApply"
+        style="@style/text_color1"
+        android:textSize="16dp" />
+
+    <Button
+        android:id="@+id/butDialogApply"
+        style="@style/text_color3"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/kuang_real_red"
+        android:text="确定" />
+
+</LinearLayout>

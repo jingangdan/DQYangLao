@@ -63,6 +63,7 @@ public class NoLoginActivity extends MyBaseActivity implements OnCallBackTCP {
     private String PATH_RSA;
     private String bind_result;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -198,6 +199,7 @@ public class NoLoginActivity extends MyBaseActivity implements OnCallBackTCP {
                                 SPUtils.savePreference(NoLoginActivity.this, "deviceid", device.getData().getDevice_id());//记录deviceid
                                 goToActivity(MainActivity.class);
                                 ScreenManagerUtils.getInstance().removeActivity(NoLoginActivity.this);
+                                NoLoginActivity.this.finish();
                             }
                             if (device.getData().getIs_primary() == 0) {
 //                                MyApplacation.tcpClient.send("[DQHB*" + SPUtils.getPreference(NoLoginActivity.this, "uid") + "*16" + "*APPLY," + device.getData().getId() + "]");

@@ -11,6 +11,7 @@ import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.dq.yanglao.utils.ForceExitReceiver;
 import com.dq.yanglao.utils.SPUtils;
 import com.dq.yanglao.utils.ToastUtils;
 import com.dq.yanglao.view.TcpClient;
@@ -68,10 +69,10 @@ public class MyApplacation extends MultiDexApplication {
         /**
          *
          */
-        if (SPUtils.getPreference(this, "isLogin").equals("1")) {
-            startTCP();
-        }
-
+//        if (SPUtils.getPreference(this, "isLogin").equals("1")) {
+//
+//        }
+        startTCP();
 //        //百度地图
 //        SDKInitializer.initialize(getApplicationContext());
 //        //极光推送
@@ -167,7 +168,8 @@ public class MyApplacation extends MultiDexApplication {
 
     public void startTCP() {
         if (tcpHelper == null) {
-            tcpHelper = new TcpHelper("47.52.199.154", 49152, this);
+            tcpHelper = new TcpHelper("47.104.201.163", 49152, this);
+            //System.out.println("1111111111111111111111 = " + tcpHelper.isConnected());
             tcpReceive = new TcpReceive();
             tcpHelper.setReceiveEvent(tcpReceive);
             handler = new MyHandler();
@@ -199,7 +201,7 @@ public class MyApplacation extends MultiDexApplication {
 //                    Toast.makeText(MyApplacation.this, "MyApplication接收 = " + msg.obj.toString(), Toast.LENGTH_LONG).show();
 //                    System.out.println("MyApplication接收 = " + msg.obj.toString());
 
-                    ToastUtils.getInstance(context).showMessage("MyApplication接收 =" + TcpRecData);
+                    //ToastUtils.getInstance(context).showMessage("MyApplication接收 =" + TcpRecData);
                     System.out.println("MyApplication接收 = " + TcpRecData);
 
                     if (!TextUtils.isEmpty(TcpRecData)) {
@@ -264,10 +266,12 @@ public class MyApplacation extends MultiDexApplication {
 //        }
 //    }
 
-//    private void bindReceiver() {
+    //    private void bindReceiver() {
 //        IntentFilter intentFilter = new IntentFilter("tcpClientReceiver");
 //        registerReceiver(myBroadcastReceiver, intentFilter);
 //    }
+    private IntentFilter mIntentFilter = null;
+    private ForceExitReceiver mMyBroadcastRecvier = null;
 
     public void setReceicer(final String msg) {
         new Thread(new Runnable() {
@@ -278,6 +282,14 @@ public class MyApplacation extends MultiDexApplication {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
+                //过滤器
+                mIntentFilter = new IntentFilter("com.example.broadcast.FORCE_EXIT");
+                //创建广播接收者的对象
+                mMyBroadcastRecvier =  new ForceExitReceiver();
+                //注册广播接收者的对象
+                registerReceiver(mMyBroadcastRecvier, mIntentFilter);
+
                 Intent intent = new Intent("com.example.broadcast.FORCE_EXIT");
                 intent.putExtra("msg", msg);
                 sendBroadcast(intent);

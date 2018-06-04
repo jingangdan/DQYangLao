@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.dq.yanglao.R;
 import com.dq.yanglao.utils.ScreenManagerUtils;
+import com.dq.yanglao.utils.StatusBarUtils;
 import com.dq.yanglao.utils.ToastUtils;
 import com.zhy.autolayout.AutoLayoutActivity;
 
@@ -52,7 +53,10 @@ public abstract class MyBaseActivity extends AutoLayoutActivity {
         x.Ext.init(this.getApplication());
         x.Ext.setDebug(BuildConfig.DEBUG);
 
-        initWindows(getResources().getColor(R.color.main_color));
+        StatusBarUtils.with(this)
+                .init();
+
+        //initWindows(getResources().getColor(R.color.bg1));
 
         ScreenManagerUtils.getInstance().addActivity(this);
 
@@ -71,15 +75,16 @@ public abstract class MyBaseActivity extends AutoLayoutActivity {
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             //设置状态栏颜色
-            window.setStatusBarColor(color);
+            // window.setStatusBarColor(color);
             //设置导航栏颜色
-            window.setNavigationBarColor(color);
+            // window.setNavigationBarColor(color);
             ViewGroup contentView = ((ViewGroup) findViewById(android.R.id.content));
             View childAt = contentView.getChildAt(0);
             if (childAt != null) {
                 childAt.setFitsSystemWindows(true);
             }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //透明状态栏
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             //透明导航栏
@@ -104,7 +109,7 @@ public abstract class MyBaseActivity extends AutoLayoutActivity {
      * @param context context
      * @return 状态栏高度
      */
-    private static int getStatusBarHeight(Context context) {
+    public int getStatusBarHeight(Context context) {
         // 获得状态栏高度
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         return context.getResources().getDimensionPixelSize(resourceId);
@@ -155,6 +160,11 @@ public abstract class MyBaseActivity extends AutoLayoutActivity {
     public void setTvTitle(String title) {
         title_tv_title.setVisibility(View.VISIBLE);
         title_tv_title.setText(title != null ? title : "");
+//        initWindows(getResources().getColor(R.color.main_color));
+        StatusBarUtils.with(this)
+                .setColor(getResources().getColor(R.color.main_color))
+                .init();
+
     }
 
     public EditText getEtSearch() {

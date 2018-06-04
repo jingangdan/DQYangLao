@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@drawable/kuang_login_res"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp">
@@ -23,29 +23,30 @@
             android:id="@+id/ivDialogHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:src="@mipmap/ic_launcher" />
 
         <TextView
             style="@style/text_color1"
+            android:padding="5dp"
             android:text="申请人手机（账号）" />
 
         <TextView
             android:id="@+id/tvDialogMobile"
             style="@style/text_color1"
-            android:text="123456"
             android:textSize="16dp" />
 
         <TextView
             android:id="@+id/tvDialogName"
             style="@style/text_color1"
+            android:padding="5dp"
             android:text="昵称：" />
 
         <TextView
             android:id="@+id/tvDialogRelation"
             style="@style/text_color1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="关系" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -59,14 +60,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/kuang_grad"
             android:text="拒绝" />
 
         <Button
             android:id="@+id/butDialogYes"
+            style="@style/text_color3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
+            android:background="@drawable/kuang_real_red"
             android:text="授权" />
 
     </LinearLayout>

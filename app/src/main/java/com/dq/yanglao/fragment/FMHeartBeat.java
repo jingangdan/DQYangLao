@@ -3,6 +3,8 @@ package com.dq.yanglao.fragment;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import com.dq.yanglao.utils.HttpPath;
 import com.dq.yanglao.utils.HttpxUtils;
 import com.dq.yanglao.utils.RSAUtils;
 import com.dq.yanglao.utils.ToastUtils;
+import com.dq.yanglao.view.StepArcView;
 
 import org.xutils.common.Callback;
 
@@ -40,18 +43,18 @@ import butterknife.OnClick;
  */
 
 public class FMHeartBeat extends MyBaseFragment implements OnCallBackTCP {
-    @Bind(R.id.butHeartBeatFront)
-    Button butHeartBeatFront;
     @Bind(R.id.tvHeartBeatDate)
     TextView tvHeartBeatDate;
-    @Bind(R.id.butHeartBeatAfter)
-    Button butHeartBeatAfter;
     @Bind(R.id.tvHeartBeatNum)
     TextView tvHeartBeatNum;
     @Bind(R.id.butHeartMeasure)
     Button butHeartMeasure;
+    @Bind(R.id.svHeartbeat)
+    StepArcView svHeartbeat;
 
     private int mYear = 2018, mMonth = 03, mDay = 28;
+
+    private Handler handler;
 
     @Nullable
     @Override
@@ -59,8 +62,21 @@ public class FMHeartBeat extends MyBaseFragment implements OnCallBackTCP {
         View view = inflater.inflate(R.layout.fm_heartbeat, null);
         ButterKnife.bind(this, view);
 
-        ForceExitReceiver.setOnClickListenerSOS(this);
+        svHeartbeat.setText("心率");
 
+
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+                Bundle dataBundle = msg.getData();
+                System.out.println("111 = " + dataBundle.getString("date"));
+                System.out.println("111 = " + dataBundle.getString("bmp"));
+                tvHeartBeatDate.setText(dataBundle.getString("date"));
+                tvHeartBeatNum.setText(dataBundle.getString("bmp"));
+            }
+        };
+
+
+        ForceExitReceiver.setOnClickListenerSOS(this);
         return view;
     }
 
@@ -76,25 +92,26 @@ public class FMHeartBeat extends MyBaseFragment implements OnCallBackTCP {
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+    public void onStart() {
+        super.onStart();
+        if (getUserVisibleHint()) {
             getHeart(getArguments().getString("deviceid"), getArguments().getString("uid"), getArguments().getString("token"));
-        } else {
-
         }
-
     }
 
-    @OnClick({R.id.butHeartBeatFront, R.id.tvHeartBeatDate, R.id.butHeartBeatAfter, R.id.butHeartMeasure})
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getUserVisibleHint()) {
+            if (getActivity() != null) {
+                getHeart(getArguments().getString("deviceid"), getArguments().getString("uid"), getArguments().getString("token"));
+            }
+        }
+    }
+
+    @OnClick({R.id.tvHeartBeatDate, R.id.butHeartMeasure})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.butHeartBeatFront:
-                break;
-            case R.id.tvHeartBeatDate:
-                break;
-            case R.id.butHeartBeatAfter:
-                break;
             case R.id.butHeartMeasure:
                 //测量
                 //[DQHB*uid*LEN*hrtstart,1]
@@ -135,6 +152,7 @@ public class FMHeartBeat extends MyBaseFragment implements OnCallBackTCP {
                         System.out.println("心率= " + result);
                         Heart heart = GsonUtil.gsonIntance().gsonToBean(result, Heart.class);
                         if (heart.getStatus() == 1) {
+                            svHeartbeat.setCurrentCount(200, Integer.parseInt(heart.getData().getBmp()));
                             tvHeartBeatNum.setText(heart.getData().getBmp());
                             tvHeartBeatDate.setText(heart.getData().getAddtime());
                         }
@@ -227,10 +245,16 @@ public class FMHeartBeat extends MyBaseFragment implements OnCallBackTCP {
             ToastUtils.getInstance(getActivity()).showMessage("测量结果返回");
             String[] temp = null;
             temp = msg.split(",");//以逗号拆分
-            tvHeartBeatDate.setText(temp[2]);
-            tvHeartBeatNum.setText(temp[1]);
-        }
+            tvHeartBeatDate.setText(temp[2].toString());
+            tvHeartBeatNum.setText(temp[1].toString());
 
+//            Message message = new Message();
+//            Bundle dataBundle = new Bundle();
+//            dataBundle.putString("date", temp[2]);
+//            dataBundle.putString("bmp", temp[1]);
+//            message.setData(dataBundle);
+//            handler.sendMessage(message);
+        }
 
     }
 }

@@ -1,31 +1,39 @@
 package com.dq.yanglao.ui;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.dq.yanglao.Interface.OnClickListeners;
 import com.dq.yanglao.Interface.OnItemClickListenerHeather;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyBaseActivity;
-import com.dq.yanglao.fragment.FindFragment;
 import com.dq.yanglao.fragment.HealthyFragment;
 import com.dq.yanglao.fragment.HomeFragment;
-import com.dq.yanglao.fragment.Location2Fragment;
 import com.dq.yanglao.fragment.LocationFragment;
 import com.dq.yanglao.fragment.MeFragment;
+import com.pgyersdk.crash.PgyCrashManager;
+import com.pgyersdk.feedback.PgyFeedback;
+import com.pgyersdk.feedback.PgyFeedbackShakeManager;
+import com.pgyersdk.update.PgyUpdateManager;
+import com.pgyersdk.update.UpdateManagerListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -80,8 +88,8 @@ public class MainActivity extends MyBaseActivity {
 
     private HomeFragment homeFragment;
     private HealthyFragment healthyFragment;
-    private Location2Fragment locationFragment;
-    private FindFragment findFragment;
+   // private WorkListFragment workListFragment;
+    private LocationFragment locationFragment;
     private MeFragment meFragment;
     private Fragment[] fragments;
 
@@ -92,27 +100,95 @@ public class MainActivity extends MyBaseActivity {
 
     public static Context mContext;
 
+    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSIONS = 1;
+    private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 2;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setBaseContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        getStatusBarHeight(this);
+
         mContext = this;
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
 
         initData();
-        setFragment();
+       // setFragment();
+
+        PgyCrashManager.register(this);
+
+        PgyFeedback.getInstance().setMoreParam("tao", "PgyFeedbackShakeManager");
+
+        PgyFeedbackShakeManager.setShakingThreshold(1000);
+
+        PgyUpdateManager.register(MainActivity.this,
+                new UpdateManagerListener() {
+                    @Override
+                    public void onUpdateAvailable(final String result) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("更新")
+                                .setMessage("有新版本上线，是否更新？")
+                                .setNeutralButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                })
+                                .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String url;
+                                        JSONObject jsonData;
+                                        try {
+                                            jsonData = new JSONObject(
+                                                    result);
+                                            if ("0".equals(jsonData.getString("code"))) {
+                                                JSONObject jsonObject = jsonData
+                                                        .getJSONObject("data");
+                                                url = jsonObject
+                                                        .getString("downloadURL");
+
+                                                startDownloadTask(
+                                                        MainActivity.this,
+                                                        url);
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).show();
+
+                    }
+
+                    @Override
+                    public void onNoUpdateAvailable() {
+                        //Toast.makeText(getApplicationContext(), "没有更新", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        //动态请求权限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSIONS);
+                requestPermissions(
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
+            }
+        }
+
     }
 
     public void initData() {
         homeFragment = new HomeFragment();
+       // workListFragment = new WorkListFragment();
         healthyFragment = new HealthyFragment();
-        locationFragment = new Location2Fragment();
-        findFragment = new FindFragment();
+        locationFragment = new LocationFragment();
         meFragment = new MeFragment();
-        meFragment = new MeFragment();
-        fragments = new Fragment[]{homeFragment, healthyFragment, locationFragment, findFragment, meFragment};
+        fragments = new Fragment[]{homeFragment, healthyFragment, locationFragment, meFragment};
         setBottomColor();
         getSupportFragmentManager().beginTransaction().add(R.id.main_fl_content, fragments[index]).show(fragments[index]).commit();
     }
@@ -125,36 +201,27 @@ public class MainActivity extends MyBaseActivity {
             case R.id.main_ll_1:
                 //首页
                 index = 0;
-                fragmentControl(pages);
+                fragmentControl();
                 break;
             case R.id.main_ll_2:
                 //健康
                 index = 1;
-                fragmentControl(pages);
+                fragmentControl();
                 break;
             case R.id.main_ll_3:
                 //定位
                 index = 2;
-                fragmentControl(pages);
+                fragmentControl();
                 break;
-            case R.id.main_ll_4:
-                //论坛
-                index = 3;
-                fragmentControl(pages);
-                break;
+//            case R.id.main_ll_4:
+//                //论坛
+//                index = 3;
+//                fragmentControl();
+//                break;
             case R.id.main_ll_5:
                 //我的
-//                if (!TextUtils.isEmpty(SPUtils.getPreference(MainActivity.this, "userid"))) {
-//                    //已登录
-//                    index = 3;
-//                    fragmentControl();
-//                } else {
-//                    //未登录
-//                    goToActivity(LoginActivity.class);
-//                }
-
-                index = 4;
-                fragmentControl(pages);
+                index = 3;
+                fragmentControl();
                 break;
         }
     }
@@ -162,7 +229,7 @@ public class MainActivity extends MyBaseActivity {
     /**
      * 控制fragment的变化
      */
-    public void fragmentControl(int page) {
+    public void fragmentControl() {
         if (currentTabIndex != index) {
             removeBottomColor();
             setBottomColor();
@@ -174,8 +241,7 @@ public class MainActivity extends MyBaseActivity {
             }
             trx.show(fragments[index]).commit();
 
-            healthyFragment.setTabPage(page);
-
+           // healthyFragment.setTabPage(page);
             currentTabIndex = index;
         }
     }
@@ -197,11 +263,11 @@ public class MainActivity extends MyBaseActivity {
                 mainIv3.setImageResource(R.mipmap.ic_fm_location002);
                 mainTv3.setTextColor(getResources().getColor(R.color.main_color));
                 break;
+//            case 3:
+//                mainIv4.setImageResource(R.mipmap.ic_launcher);
+//                mainTv4.setTextColor(getResources().getColor(R.color.main_color));
+//                break;
             case 3:
-                mainIv4.setImageResource(R.mipmap.ic_launcher);
-                mainTv4.setTextColor(getResources().getColor(R.color.main_color));
-                break;
-            case 4:
                 mainIv5.setImageResource(R.mipmap.ic_fm_me002);
                 mainTv5.setTextColor(getResources().getColor(R.color.main_color));
                 break;
@@ -225,11 +291,11 @@ public class MainActivity extends MyBaseActivity {
                 mainIv3.setImageResource(R.mipmap.ic_fm_location001);
                 mainTv3.setTextColor(getResources().getColor(R.color.text_color2));
                 break;
+//            case 3:
+//                mainIv4.setImageResource(R.mipmap.ic_launcher);
+//                mainTv4.setTextColor(getResources().getColor(R.color.text_color2));
+//                break;
             case 3:
-                mainIv4.setImageResource(R.mipmap.ic_launcher);
-                mainTv4.setTextColor(getResources().getColor(R.color.text_color2));
-                break;
-            case 4:
                 mainIv5.setImageResource(R.mipmap.ic_fm_me001);
                 mainTv5.setTextColor(getResources().getColor(R.color.text_color2));
                 break;
@@ -237,40 +303,23 @@ public class MainActivity extends MyBaseActivity {
     }
 
     /*跳转到fragment*/
-    public void setFragment() {
-        homeFragment.setOnItemClickListener(new OnItemClickListenerHeather() {
-            @Override
-            public void onItemClick(View view, int position, int page) {
-
-                index = position;
-                pages = page;
-                fragmentControl(pages);
-            }
-        });
-
-        healthyFragment.setOnClickListeners(new OnClickListeners() {
-            @Override
-            public void onItemClick(int position) {
-                pages = position;
-                fragmentControl(pages);
-            }
-        });
-    }
-
-
-    public void showDialog(){
-        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-        dialog.setTitle("测试全局弹框");
-        dialog.setMessage("正常弹出，你看到我了");
-        AlertDialog alertDialog = dialog.create();
-        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
-        alertDialog.show();
-//        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-//        dialog.setTitle("测试全局弹框");
-//        dialog.setMessage("正常弹出，你看到我了");
-//        AlertDialog alertDialog = dialog.create();
-//        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
-//        alertDialog.show();
-    }
-
+//    public void setFragment() {
+//        homeFragment.setOnItemClickListener(new OnItemClickListenerHeather() {
+//            @Override
+//            public void onItemClick(View view, int position, int page) {
+//
+//                index = position;
+//                pages = page;
+//                fragmentControl();
+//            }
+//        });
+//
+//        healthyFragment.setOnClickListeners(new OnClickListeners() {
+//            @Override
+//            public void onItemClick(int position) {
+//                pages = position;
+//                fragmentControl(pages);
+//            }
+//        });
+//    }
 }

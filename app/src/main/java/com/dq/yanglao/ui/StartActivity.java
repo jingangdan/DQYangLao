@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyBaseActivity;
 import com.dq.yanglao.utils.SPUtils;
+import com.dq.yanglao.utils.StatusBarUtils;
 
 /**
  * 启动页
@@ -19,10 +20,6 @@ public class StartActivity extends MyBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
-
-//        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setBaseContentView(R.layout.activity_start);
 
         new Thread(new Runnable() {
@@ -33,9 +30,9 @@ public class StartActivity extends MyBaseActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                //获取本地轻量型存储的是否登录、是否绑定设备标记
                 isLogin = SPUtils.getPreference(StartActivity.this, "isLogin");
                 isBind = SPUtils.getPreference(StartActivity.this, "isBind");
-                // goToActivity(TestActivity.class);
 
                 if (isLogin.equals("") || isLogin.equals("0")) {
                     goToActivity(LoginActivity.class);

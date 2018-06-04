@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/kuang_login_res"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/ivItemFamily"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginRight="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvItemFamilyName"
+                style="@style/text_color1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="姓名" />
+
+            <TextView
+                android:id="@+id/tvItemFamilyMobile"
+                style="@style/text_color2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="账号" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -18,6 +18,8 @@ import com.dq.yanglao.Interface.OnCallBackTCP;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyApplacation;
 import com.dq.yanglao.bean.DeviceInfo;
+import com.dq.yanglao.ui.MainActivity;
+import com.dq.yanglao.ui.NoLoginActivity;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -72,8 +74,13 @@ public class ForceExitReceiver extends BroadcastReceiver {
             case "APPLY":
                 //用户申请授权
                 //[DQHB*2*000A*APPLY,94,1]
-//                mCallback.onCallback(temp[2]);
-                mCallback.onCallback(type, string2);
+                // mCallback.onCallback(type, string2);
+                System.out.println("aaaaaa = " + temp[2]);
+                if (temp[2].equals("1")) {
+                    setDialogApply(1);
+                } else if (temp[2].equals("0")) {
+                    setDialogApply(0);
+                }
                 break;
             case "AUTH":
                 //主账号授权
@@ -132,6 +139,32 @@ public class ForceExitReceiver extends BroadcastReceiver {
 
             case "UD":
                 //定位 [DQHB*1*001A*UD,5,35.065287,118.3212733]
+                mCallback.onCallback(type, string2);
+                break;
+            case "POWEROFF":
+                //设备关机 [DQHB*uid*0004*POWEROFF,设备id]
+                mCallback.onCallback(type, string2);
+                break;
+
+                /*部分功能开关*/
+            case "SOSSMS":
+                //SOS短信报警开关[DQHB*用户id*LEN*(act),device_id]
+                mCallback.onCallback(type, string2);
+                break;
+            case "LOWBAT":
+                //低电短信报警开关[DQHB*用户id*LEN*(act),device_id]
+                mCallback.onCallback(type, string2);
+                break;
+            case "REMOVE":
+                //取下手环报警开关[DQHB*用户id*LEN*(act),device_id]
+                mCallback.onCallback(type, string2);
+                break;
+            case "REMOVESMS":
+                //手表拆除报警短信的开关[DQHB*用户id*LEN*(act),device_id]
+                mCallback.onCallback(type, string2);
+                break;
+            case "PEDO":
+                //计步功能开关[DQHB*用户id*LEN*(act),device_id]
                 mCallback.onCallback(type, string2);
                 break;
         }
@@ -197,7 +230,7 @@ public class ForceExitReceiver extends BroadcastReceiver {
         bottomDialog.setContentView(view);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
         params.width = activity.getResources().getDisplayMetrics().widthPixels - DensityUtil.dp2px(activity, 60f);
-        params.bottomMargin = DensityUtil.dp2px(activity, 60f);
+        params.bottomMargin = DensityUtil.dp2px(activity, 50f);
         view.setLayoutParams(params);
         bottomDialog.getWindow().setGravity(Gravity.CENTER);
 
@@ -248,4 +281,46 @@ public class ForceExitReceiver extends BroadcastReceiver {
 
     }
 
+
+    private TextView tvApply;
+    private Button butApply;
+
+    public void setDialogApply(final int tag) {
+        final Activity activity = ScreenManagerUtils.getmCurrentActivity();
+        final Dialog bottomDialog = new Dialog(activity, R.style.BottomDialog);
+        View view = LayoutInflater.from(activity).inflate(R.layout.dialog_apply, null);
+        bottomDialog.setContentView(view);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        params.width = activity.getResources().getDisplayMetrics().widthPixels - DensityUtil.dp2px(activity, 60f);
+        params.bottomMargin = DensityUtil.dp2px(activity, 50f);
+        view.setLayoutParams(params);
+        bottomDialog.getWindow().setGravity(Gravity.CENTER);
+
+        bottomDialog.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
+        bottomDialog.show();
+
+        tvApply = (TextView) bottomDialog.findViewById(R.id.tvDialogApply);
+        butApply = (Button) bottomDialog.findViewById(R.id.butDialogApply);
+        if (tag == 1) {
+            tvApply.setText("您的绑定设备申请已被同意！");
+        } else if (tag == 0) {
+            tvApply.setText("抱歉，您的绑定设备申请未被同意！");
+        }
+
+        butApply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (tag == 1) {
+                    SPUtils.savePreference(activity, "isBind", "1");//0 未绑定  1已绑定
+                    activity.startActivity(new Intent(activity, MainActivity.class));
+                    // ScreenManagerUtils.getInstance().removeActivity(activity);
+                    ScreenManagerUtils.getInstance().clearActivityStack();
+                } else if (tag == 0) {
+                    bottomDialog.dismiss();
+                }
+            }
+        });
+
+
+    }
 }

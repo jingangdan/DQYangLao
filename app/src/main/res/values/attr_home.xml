@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ColorCircleProgressView">
+        <!--定义圆环的渐变颜色-->
+        <attr name="Color01" format="color"/>
+        <attr name="Color02" format="color"/>
+        <attr name="Color03" format="color"/>
+        <attr name="Color04" format="color"/>
+        <attr name="Color05" format="color"/>
+        <attr name="Color06" format="color"/>
+        <attr name="Color07" format="color"/>
+        <!--定义圆环角度及开始位置的角度,圆环到view边框的距离-->
+        <attr name="ViewAngle" format="integer"/>
+        <attr name="StartAngle" format="integer"/>
+        <attr name="ViewPadding" format="integer"/>
+        <!--定义圆环的大小，是否圆角-->
+        <attr name="StrokeWith" format="integer"/>
+        <attr name="IsRound" format="boolean"/>
+
+        <!--定义点的大小和颜色-->
+        <attr name="PointColor" format="color"/>
+        <attr name="PointRadio" format="integer"/>
+
+    </declare-styleable>
+</resources>

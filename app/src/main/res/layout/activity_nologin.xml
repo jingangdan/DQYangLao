@@ -35,7 +35,7 @@
                 android:layout_height="0dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/kuang_red"
+                android:background="@drawable/kuang_real_red"
                 android:text="微聊" />
 
             <Button
@@ -43,7 +43,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@drawable/kuang_red"
+                android:background="@drawable/kuang_real_red"
                 android:text="通话" />
 
         </LinearLayout>
@@ -60,7 +60,7 @@
                 style="@style/text_color3"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@drawable/kuang_red"
+                android:background="@drawable/kuang_real_red"
                 android:text="地图" />
 
 
@@ -81,7 +81,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:background="@drawable/kuang_red"
+            android:background="@drawable/kuang_real_red"
             android:text="电话本" />
 
         <Button
@@ -91,7 +91,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:background="@drawable/kuang_red"
+            android:background="@drawable/kuang_real_red"
             android:text="吃药提醒" />
 
         <Button
@@ -99,7 +99,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:background="@drawable/kuang_red"
+            android:background="@drawable/kuang_real_red"
             android:text="安全区域" />
 
 
@@ -118,7 +118,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:background="@drawable/kuang_red"
+            android:background="@drawable/kuang_real_red"
             android:text="记步" />
 
         <Button
@@ -128,7 +128,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:background="@drawable/kuang_red"
+            android:background="@drawable/kuang_real_red"
             android:text="心率" />
 
         <Button
@@ -136,7 +136,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:background="@drawable/kuang_red"
+            android:background="@drawable/kuang_real_red"
             android:text="睡眠" />
 
 
@@ -155,7 +155,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:background="@drawable/kuang_red"
+            android:background="@drawable/kuang_real_red"
             android:text="家庭成员" />
 
         <Button
@@ -165,7 +165,7 @@
             android:layout_height="fill_parent"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
-            android:background="@drawable/kuang_red"
+            android:background="@drawable/kuang_real_red"
             android:text="退出登录" />
 
     </LinearLayout>

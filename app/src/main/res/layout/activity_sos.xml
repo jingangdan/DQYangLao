@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/ic_me_sos" />
 
         <TextView
             style="@style/text_color2"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="可设置3个号码，当拨打第一个号码不接或者不通时，将会接着拨打第二个，依次类推。"
-            android:textColor="@color/bg3"
+            android:textColor="#8B8B8B"
             android:textSize="12dp" />
 
     </LinearLayout>
@@ -47,9 +47,9 @@
         android:padding="5dp">
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@mipmap/ic_launcher" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_sos1" />
 
         <EditText
             android:id="@+id/editSos1"
@@ -57,7 +57,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="输入第一个收号吗"
+            android:hint="输入第一个手机号码"
             android:inputType="number"
             android:padding="5dp" />
 
@@ -74,9 +74,9 @@
         android:padding="5dp">
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@mipmap/ic_launcher" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_sos2" />
 
         <EditText
             android:id="@+id/editSos2"
@@ -84,7 +84,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="输入第一个收号吗"
+            android:hint="输入第二个手机号码"
             android:inputType="number"
             android:padding="5dp" />
 
@@ -99,9 +99,9 @@
         android:padding="5dp">
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@mipmap/ic_launcher" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_sos3" />
 
         <EditText
             android:id="@+id/editSos3"
@@ -109,7 +109,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="输入第一个收号吗"
+            android:hint="输入第三个手机号码"
             android:inputType="number"
             android:padding="5dp" />
 
@@ -127,7 +127,7 @@
             style="@style/text_color3"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:background="@drawable/kuang_red"
+            android:background="@drawable/kuang_real_red"
             android:text="保存" />
 
     </LinearLayout>

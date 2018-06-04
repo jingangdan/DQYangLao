@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,11 +13,8 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.fence.GeoFence;
@@ -42,11 +40,23 @@ import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.PolygonOptions;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyBaseActivity;
+import com.dq.yanglao.bean.UserInfo2;
+import com.dq.yanglao.utils.Base64Utils;
+import com.dq.yanglao.utils.CodeUtils;
 import com.dq.yanglao.utils.Const;
+import com.dq.yanglao.utils.GsonUtil;
+import com.dq.yanglao.utils.HttpPath;
+import com.dq.yanglao.utils.HttpxUtils;
+import com.dq.yanglao.utils.RSAUtils;
+import com.dq.yanglao.utils.SPUtils;
 
+import org.xutils.common.Callback;
+
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -55,26 +65,19 @@ import butterknife.ButterKnife;
  * 地理围栏
  * Created by jingang on 2018/4/14.
  */
-
-public class DistrictActivity2 extends MyBaseActivity implements
+public class AddDistricrActivity extends MyBaseActivity implements
         GeoFenceListener,
         AMap.OnMapClickListener,
         LocationSource,
         AMapLocationListener,
         CompoundButton.OnCheckedChangeListener {
 
-    @Bind(R.id.ly_option)
-    LinearLayout lyOption;
-    @Bind(R.id.cb_alertIn)
-    CheckBox cbAlertIn;
-    @Bind(R.id.cb_alertOut)
-    CheckBox cbAlertOut;
-    @Bind(R.id.cb_alertStated)
-    CheckBox cbAldertStated;
     @Bind(R.id.map)
     MapView mMapView;
-    @Bind(R.id.tv_result)
-    TextView tvResult;
+    @Bind(R.id.editDistrictName)
+    EditText editDistrictName;
+    @Bind(R.id.editDistrictRedii)
+    EditText editDistrictRedii;
     /**
      * 用于显示当前的位置
      * <p>
@@ -101,7 +104,7 @@ public class DistrictActivity2 extends MyBaseActivity implements
     // 地理围栏客户端
     private GeoFenceClient fenceClient = null;
     // 要创建的围栏半径
-    private float fenceRadius = 0.0F;
+    private float fenceRadius;
     // 触发地理围栏的行为，默认为进入提醒
     private int activatesAction = GeoFenceClient.GEOFENCE_IN;
     // 地理围栏的广播action
@@ -110,23 +113,112 @@ public class DistrictActivity2 extends MyBaseActivity implements
     // 记录已经添加成功的围栏
     private HashMap<String, GeoFence> fenceMap = new HashMap<String, GeoFence>();
 
+    private double lat, lng;
+    private boolean isClick;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setBaseContentView(R.layout.activity_district2);
+        setBaseContentView(R.layout.activity_adddistrict);
         ButterKnife.bind(this);
         setTvTitle("地理围栏");
         setIvBack();
+        getTvRight().setText("保存");
+        getTvRight().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(String.valueOf(lat))) {
+                    showMessage("请选择中心点");
+                    return;
+                }
+                if (TextUtils.isEmpty(editDistrictName.getText().toString().trim())) {
+                    showMessage("请输入区域名称");
+                    return;
+                }
+                if (TextUtils.isEmpty(editDistrictRedii.getText().toString().trim())) {
+                    showMessage("请输入区域半径");
+                    return;
+                }
+                if (!isClick) {
+                    isClick = true;
+                    fenceRadius = Float.parseFloat(editDistrictRedii.getText().toString().trim());
+                    setFence();
+                }
+
+            }
+        });
+
+        lat = getIntent().getExtras().getDouble("lat");
+        lng = getIntent().getExtras().getDouble("lng");
+        fenceRadius = getIntent().getExtras().getFloat("redii");
+
+        editDistrictRedii.setText(fenceRadius + "");
 
         // 初始化地理围栏
         fenceClient = new GeoFenceClient(getApplicationContext());
-        tvResult.setVisibility(View.GONE);
         mMapView.onCreate(savedInstanceState);
         markerOption = new MarkerOptions().draggable(true);
         init();
 
-        addFence();
+        if (!TextUtils.isEmpty(String.valueOf(lat))) {
+            if (!TextUtils.isEmpty(String.valueOf(fenceRadius))) {
+                addFence();
+            }
+        }
+    }
 
+    public void setFence() {
+        String PATH_RSA = "device_id=" + SPUtils.getPreference(this, "deviceid") + "&uid=" + SPUtils.getPreference(this, "uid") + "&token=" + SPUtils.getPreference(this, "token")
+                + "&lat=" + lat + "&lng=" + lng + "&redii=" + fenceRadius;
+        System.out.println("sos = " + PATH_RSA);
+        try {
+            PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+            byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+            xUtilsSetFence(Base64Utils.encode(encryptByte).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void xUtilsSetFence(String sign) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("sign", sign);
+        HttpxUtils.Post(this,
+                HttpPath.DEVICE_SETFENCE,
+                map,
+                new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        System.out.println("设置围栏 = " + result);
+                        UserInfo2 u2 = GsonUtil.gsonIntance().gsonToBean(result, UserInfo2.class);
+                        if (u2.getStatus() == 1) {
+                            showMessage(u2.getData());
+                            // addFence();
+
+                            setResult(CodeUtils.LOCATION_ADD, new Intent());
+                            AddDistricrActivity.this.finish();
+                        }
+                        if (u2.getStatus() == 0) {
+                            showMessage(u2.getData());
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
     }
 
     void init() {
@@ -134,12 +226,9 @@ public class DistrictActivity2 extends MyBaseActivity implements
             mAMap = mMapView.getMap();
             mAMap.getUiSettings().setRotateGesturesEnabled(false);
             mAMap.moveCamera(CameraUpdateFactory.zoomBy(6));
-            setUpMap();
+//            setUpMap();
+            setMyLocationStyle();
         }
-
-        cbAlertIn.setOnCheckedChangeListener(this);
-        cbAlertOut.setOnCheckedChangeListener(this);
-        cbAldertStated.setOnCheckedChangeListener(this);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(GEOFENCE_BROADCAST_ACTION);
@@ -183,6 +272,24 @@ public class DistrictActivity2 extends MyBaseActivity implements
         mAMap.moveCamera(CameraUpdateFactory.zoomTo(16));//设置地图的缩放级别
         mAMap.getUiSettings().setLogoBottomMargin(-50);//取消高德地图logo
         mAMap.getUiSettings().setZoomControlsEnabled(false);//控制缩放控件的显示和隐藏。
+    }
+
+    public void setMyLocationStyle() {
+        mAMap.setOnMapClickListener(this);
+        //创建marker并定位到marker
+        centerLatLng = new LatLng(lat, lng);
+        mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, 19));
+        markerOption = new MarkerOptions();
+        markerOption.position(centerLatLng);
+        markerOption.visible(true);
+        ICON_YELLOW = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_address));
+        markerOption.icon(ICON_YELLOW);
+        mAMap.addMarker(markerOption);
+
+        mAMap.moveCamera(CameraUpdateFactory.zoomTo(16));//设置地图的缩放级别
+        mAMap.getUiSettings().setLogoBottomMargin(-50);//取消高德地图logo
+        mAMap.getUiSettings().setZoomControlsEnabled(false);//控制缩放控件的显示和隐藏。
+
     }
 
     /**
@@ -312,36 +419,6 @@ public class DistrictActivity2 extends MyBaseActivity implements
         }.start();
     }
 
-    Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("添加围栏成功");
-                    String customId = (String) msg.obj;
-                    if (!TextUtils.isEmpty(customId)) {
-                        sb.append("customId: ").append(customId);
-                    }
-                    Toast.makeText(getApplicationContext(), sb.toString(),
-                            Toast.LENGTH_SHORT).show();
-                    drawFence2Map();
-                    break;
-                case 1:
-                    int errorCode = msg.arg1;
-                    Toast.makeText(getApplicationContext(),
-                            "添加围栏失败 " + errorCode, Toast.LENGTH_SHORT).show();
-                    break;
-                case 2:
-                    String statusStr = (String) msg.obj;
-                    tvResult.setVisibility(View.VISIBLE);
-                    tvResult.append(statusStr + "\n");
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
     List<GeoFence> fenceList = new ArrayList<GeoFence>();
 
     @Override
@@ -352,11 +429,11 @@ public class DistrictActivity2 extends MyBaseActivity implements
             fenceList = geoFenceList;
             msg.obj = customId;
             msg.what = 0;
+            drawFence2Map();
         } else {
             msg.arg1 = errorCode;
             msg.what = 1;
         }
-        handler.sendMessage(msg);
     }
 
     /**
@@ -401,7 +478,6 @@ public class DistrictActivity2 extends MyBaseActivity implements
                 Message msg = Message.obtain();
                 msg.obj = str;
                 msg.what = 2;
-                handler.sendMessage(msg);
             }
         }
     };
@@ -410,7 +486,10 @@ public class DistrictActivity2 extends MyBaseActivity implements
     public void onMapClick(LatLng latLng) {
         markerOption.icon(ICON_YELLOW);
         centerLatLng = latLng;
+        lat = centerLatLng.latitude;
+        lng = centerLatLng.longitude;
         addCenterMarker(centerLatLng);
+        // setMyLocationStyle();
     }
 
     /**
@@ -420,14 +499,11 @@ public class DistrictActivity2 extends MyBaseActivity implements
     public void onLocationChanged(AMapLocation amapLocation) {
         if (mListener != null && amapLocation != null) {
             if (amapLocation != null && amapLocation.getErrorCode() == 0) {
-                tvResult.setVisibility(View.GONE);
                 mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
             } else {
                 String errText = "定位失败," + amapLocation.getErrorCode() + ": "
                         + amapLocation.getErrorInfo();
                 Log.e("AmapErr", errText);
-                tvResult.setVisibility(View.VISIBLE);
-                tvResult.setText(errText);
             }
         }
     }
@@ -489,37 +565,6 @@ public class DistrictActivity2 extends MyBaseActivity implements
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()) {
-            case R.id.cb_alertIn:
-                if (isChecked) {
-                    activatesAction |= GeoFenceClient.GEOFENCE_IN;
-                } else {
-                    activatesAction = activatesAction
-                            & (GeoFenceClient.GEOFENCE_OUT
-                            | GeoFenceClient.GEOFENCE_STAYED);
-                }
-                break;
-            case R.id.cb_alertOut:
-                if (isChecked) {
-                    activatesAction |= GeoFenceClient.GEOFENCE_OUT;
-                } else {
-                    activatesAction = activatesAction
-                            & (GeoFenceClient.GEOFENCE_IN
-                            | GeoFenceClient.GEOFENCE_STAYED);
-                }
-                break;
-            case R.id.cb_alertStated:
-                if (isChecked) {
-                    activatesAction |= GeoFenceClient.GEOFENCE_STAYED;
-                } else {
-                    activatesAction = activatesAction
-                            & (GeoFenceClient.GEOFENCE_IN
-                            | GeoFenceClient.GEOFENCE_OUT);
-                }
-                break;
-            default:
-                break;
-        }
         if (null != fenceClient) {
             fenceClient.setActivateAction(activatesAction);
         }
@@ -542,21 +587,7 @@ public class DistrictActivity2 extends MyBaseActivity implements
      * @since 3.2.0
      */
     private void addRoundFence() {
-//        String customId = etCustomId.getText().toString();
-//        String radiusStr = etRadius.getText().toString();
-//        if (null == centerLatLng
-//                || TextUtils.isEmpty(radiusStr)) {
-//            Toast.makeText(getApplicationContext(), "参数不全", Toast.LENGTH_SHORT)
-//                    .show();
-//            return;
-//        }
-
-//        DPoint centerPoint = new DPoint(centerLatLng.latitude,
-//                centerLatLng.longitude);
-//        fenceRadius = Float.parseFloat(radiusStr);
-//        fenceClient.addGeoFence(centerPoint, fenceRadius, customId);
-        DPoint centerPoint = new DPoint(35.065287, 118.3212733);
-        fenceRadius = 500;
-        fenceClient.addGeoFence(centerPoint, fenceRadius, "测试围栏");
+        DPoint centerPoint = new DPoint(lat, lng);
+        fenceClient.addGeoFence(centerPoint, fenceRadius, "围栏");
     }
 }

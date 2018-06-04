@@ -36,10 +36,11 @@ public class ImageLoopAdapter extends LoopPagerAdapter {
         view.setScaleType(ImageView.ScaleType.CENTER_CROP);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        ImageUtils.loadIntoUseFitWidth(mContext,
-                "http://new.dequanhuibao.com/attachment/admin//20180410/1523342500_1640139241.jpg",
-                R.mipmap.ic_launcher,
-                view);
+        view.setImageResource(R.mipmap.ic_baner);
+//        ImageUtils.loadIntoUseFitWidth(mContext,
+//                "http://new.dequanhuibao.com/attachment/admin//20180410/1523342500_1640139241.jpg",
+//                R.mipmap.ic_launcher,
+//                view);
 
         return view;
     }

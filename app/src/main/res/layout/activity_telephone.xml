@@ -63,7 +63,7 @@
             style="@style/text_color3"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:background="@drawable/kuang_red"
+            android:background="@drawable/kuang_real_red"
             android:text="添加号码"
             android:textSize="14dp" />
 

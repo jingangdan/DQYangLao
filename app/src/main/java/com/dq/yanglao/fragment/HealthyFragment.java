@@ -8,12 +8,15 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.dq.yanglao.Interface.OnClickListeners;
 import com.dq.yanglao.R;
 import com.dq.yanglao.adapter.SimpleFragmentPagerAdapter;
 import com.dq.yanglao.base.MyBaseFragment;
 import com.dq.yanglao.utils.SPUtils;
+import com.dq.yanglao.utils.TimeUtils;
 import com.dq.yanglao.view.NoScrollViewPager;
 
 import java.util.ArrayList;
@@ -32,6 +35,8 @@ public class HealthyFragment extends MyBaseFragment implements ViewPager.OnPageC
     TabLayout tabLayout1;
     @Bind(R.id.tb_noScrollViewPage1)
     NoScrollViewPager noScrollViewPager1;
+    @Bind(R.id.ll_tablayout)
+    LinearLayout llTablayout;
 
     private String[] titles = new String[]{"计步", "心率", "睡眠"};
     private List<Fragment> fragments = new ArrayList<>();
@@ -48,8 +53,16 @@ public class HealthyFragment extends MyBaseFragment implements ViewPager.OnPageC
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tablayout1, null);
         ButterKnife.bind(this, view);
+        setTopMargin();
+
         setFragment(page);
         return view;
+    }
+
+    public void setTopMargin() {
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(llTablayout.getLayoutParams());
+        lp.setMargins(0, TimeUtils.getStatusBarHeight(getActivity()), 0, 0);
+        llTablayout.setLayoutParams(lp);
     }
 
     public void setOnClickListeners(OnClickListeners onClickListeners) {
@@ -63,7 +76,7 @@ public class HealthyFragment extends MyBaseFragment implements ViewPager.OnPageC
 
         fragments.add(FMMove.newInstance(deviceid, uid, token));
         fragments.add(FMHeartBeat.newInstance(deviceid, uid, token));
-        fragments.add(FMHeartBeat.newInstance(deviceid, uid, token));
+        fragments.add(FMSleep.newInstance(deviceid, uid, token));
 
         sfpAdapter = new SimpleFragmentPagerAdapter(getActivity().getSupportFragmentManager(), getActivity(), fragments, titles);
         noScrollViewPager1.setAdapter(sfpAdapter);
@@ -100,5 +113,11 @@ public class HealthyFragment extends MyBaseFragment implements ViewPager.OnPageC
 
             noScrollViewPager1.setCurrentItem(page);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 }

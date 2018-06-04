@@ -36,15 +36,14 @@ import com.dq.yanglao.utils.HttpxUtils;
 import com.dq.yanglao.utils.RSAUtils;
 import com.dq.yanglao.utils.SPUtils;
 import com.dq.yanglao.utils.ScreenManagerUtils;
-import com.dq.yanglao.view.TcpClient;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 
-import java.net.URLEncoder;
 import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -54,7 +53,6 @@ import butterknife.OnClick;
  * 登录
  * Created by jingang on 2018/4/9.
  */
-
 public class LoginActivity extends MyBaseActivity {
     @Bind(R.id.etLoginPhone)
     EditText etLoginPhone;
@@ -84,8 +82,6 @@ public class LoginActivity extends MyBaseActivity {
     private Button butEmail, butPhone, butCancel;
     private String phone, pwd, PATH_RSA;
 
-    private String login_result;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,8 +91,6 @@ public class LoginActivity extends MyBaseActivity {
         initWatcher();
         etLoginPhone.addTextChangedListener(phone_watcher);
         etLoginPwd.addTextChangedListener(pwd_watcher);
-
-//        tvRes.setOnClickListener(new OnClickListener());
 
         //关闭软键盘
         linLoginMain.setOnTouchListener(new View.OnTouchListener() {
@@ -269,43 +263,39 @@ public class LoginActivity extends MyBaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         System.out.println("登录 = " + result);
-                        login_result = result;
-                        UserInfo1 u1 = GsonUtil.gsonIntance().gsonToBean(result, UserInfo1.class);
-                        if (u1.getStatus() == 1) {
-                            SPUtils.savePreference(LoginActivity.this, "isLogin", "1");//0 未登录  1已登录
-                            SPUtils.savePreference(LoginActivity.this, "uid", u1.getData().getId());
-                            SPUtils.savePreference(LoginActivity.this, "token", u1.getData().getToken());//用户id
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            if (jsonObject.getInt("status") == 1) {
+                                UserInfo1 u1 = GsonUtil.gsonIntance().gsonToBean(result, UserInfo1.class);
+                                SPUtils.savePreference(LoginActivity.this, "isLogin", "1");//0 未登录  1已登录
+                                SPUtils.savePreference(LoginActivity.this, "uid", u1.getData().getId());
+                                SPUtils.savePreference(LoginActivity.this, "token", u1.getData().getToken());//用户id
 
-//                            MyApplacation.exec = Executors.newCachedThreadPool();
-//                            MyApplacation.tcpClient = new TcpClient("47.52.199.154", 49152, MyApplacation.context);
-//                            MyApplacation.exec.execute(MyApplacation.tcpClient);
-
-                            if (MyApplacation.tcpHelper == null) {
-                                MyApplacation applacation = new MyApplacation();
-                                applacation.startTCP();
-                            }
-
-                            if (!TextUtils.isEmpty(u1.getData().getId())) {
-                                PATH_RSA = "uid=" + u1.getData().getId() + "&token=" + u1.getData().getToken();
-                                try {
-                                    PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
-                                    byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
-                                    getDevice(Base64Utils.encode(encryptByte).toString());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                if (MyApplacation.tcpHelper == null) {
+                                    MyApplacation applacation = new MyApplacation();
+                                    applacation.startTCP();
                                 }
+
+                                if (!TextUtils.isEmpty(u1.getData().getId())) {
+                                    PATH_RSA = "uid=" + u1.getData().getId() + "&token=" + u1.getData().getToken();
+                                    try {
+                                        PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+                                        byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+                                        getDevice(Base64Utils.encode(encryptByte).toString());
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            } else if (jsonObject.getInt("status") == 0) {
+                                showMessage(jsonObject.getString("data"));
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
 
                     @Override
                     public void onError(Throwable ex, boolean isOnCallback) {
-                        if (!TextUtils.isEmpty(login_result)) {
-                            UserInfo2 u2 = GsonUtil.gsonIntance().gsonToBean(login_result, UserInfo2.class);
-                            if (u2.getStatus() == 0) {
-                                showMessage(u2.getData());
-                            }
-                        }
                     }
 
                     @Override
@@ -345,7 +335,8 @@ public class LoginActivity extends MyBaseActivity {
                             } else {
                                 goToActivity(NoLoginActivity.class);
                             }
-                            ScreenManagerUtils.getInstance().removeActivity(LoginActivity.this);
+                            //ScreenManagerUtils.getInstance().removeActivity(LoginActivity.this);
+                            ScreenManagerUtils.getInstance().clearActivityStack();
                         }
                     }
 

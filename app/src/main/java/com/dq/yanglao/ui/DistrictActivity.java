@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,10 +14,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,11 +41,24 @@ import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.PolygonOptions;
 import com.dq.yanglao.R;
 import com.dq.yanglao.base.MyBaseActivity;
+import com.dq.yanglao.bean.Fence;
+import com.dq.yanglao.bean.UserInfo2;
+import com.dq.yanglao.utils.Base64Utils;
+import com.dq.yanglao.utils.CodeUtils;
 import com.dq.yanglao.utils.Const;
+import com.dq.yanglao.utils.GsonUtil;
+import com.dq.yanglao.utils.HttpPath;
+import com.dq.yanglao.utils.HttpxUtils;
+import com.dq.yanglao.utils.RSAUtils;
+import com.dq.yanglao.utils.SPUtils;
 
+import org.xutils.common.Callback;
+
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -59,39 +70,18 @@ import butterknife.OnClick;
  */
 
 public class DistrictActivity extends MyBaseActivity implements
-        View.OnClickListener,
         GeoFenceListener,
         AMap.OnMapClickListener,
         LocationSource,
         AMapLocationListener,
         CompoundButton.OnCheckedChangeListener {
 
-    @Bind(R.id.et_customId)
-    EditText etCustomId;
-    @Bind(R.id.et_keyword)
-    EditText etKeyword;
-    @Bind(R.id.et_radius)
-    EditText etRadius;
-    @Bind(R.id.et_fenceSize)
-    EditText etFenceSize;
-    @Bind(R.id.ly_option)
-    LinearLayout lyOption;
-    @Bind(R.id.cb_alertIn)
-    CheckBox cbAlertIn;
-    @Bind(R.id.cb_alertOut)
-    CheckBox cbAlertOut;
-    @Bind(R.id.cb_alertStated)
-    CheckBox cbAldertStated;
-    @Bind(R.id.tv_guide)
-    TextView tvGuide;
-    @Bind(R.id.bt_addFence)
-    Button btAddFence;
-    @Bind(R.id.bt_option)
-    Button btOption;
     @Bind(R.id.map)
     MapView mMapView;
-    @Bind(R.id.tv_result)
-    TextView tvResult;
+    @Bind(R.id.tvDistrictResult)
+    TextView tvDistrictResult;
+    @Bind(R.id.butAddDistricrt)
+    Button butAddDistricrt;
     /**
      * 用于显示当前的位置
      * <p>
@@ -108,10 +98,7 @@ public class DistrictActivity extends MyBaseActivity implements
     private LatLng centerLatLng = null;
     // 中心点marker
     private Marker centerMarker;
-    private BitmapDescriptor ICON_YELLOW = BitmapDescriptorFactory
-            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
-    private BitmapDescriptor ICON_RED = BitmapDescriptorFactory
-            .defaultMarker(BitmapDescriptorFactory.HUE_RED);
+    private BitmapDescriptor ICON_YELLOW;
     private MarkerOptions markerOption = null;
     private List<Marker> markerList = new ArrayList<Marker>();
     // 当前的坐标点集合，主要用于进行地图的可视区域的缩放
@@ -120,7 +107,7 @@ public class DistrictActivity extends MyBaseActivity implements
     // 地理围栏客户端
     private GeoFenceClient fenceClient = null;
     // 要创建的围栏半径
-    private float fenceRadius = 0.0F;
+    private float fenceRadius;
     // 触发地理围栏的行为，默认为进入提醒
     private int activatesAction = GeoFenceClient.GEOFENCE_IN;
     // 地理围栏的广播action
@@ -129,23 +116,115 @@ public class DistrictActivity extends MyBaseActivity implements
     // 记录已经添加成功的围栏
     private HashMap<String, GeoFence> fenceMap = new HashMap<String, GeoFence>();
 
+    private double lat, lng;
+    private Intent intent;
+    private Bundle bundle;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setBaseContentView(R.layout.activity_district);
+        setBaseContentView(R.layout.activity_district2);
         ButterKnife.bind(this);
         setTvTitle("地理围栏");
         setIvBack();
 
+        lat = getIntent().getDoubleExtra("lat", 0);
+        lng = getIntent().getDoubleExtra("lng", 1);
+
         // 初始化地理围栏
         fenceClient = new GeoFenceClient(getApplicationContext());
-        tvResult.setVisibility(View.GONE);
         mMapView.onCreate(savedInstanceState);
         markerOption = new MarkerOptions().draggable(true);
         init();
 
-        addFence();
+        getFence();
+    }
 
+    @OnClick({R.id.tvDistrictResult, R.id.butAddDistricrt})
+    public void onViewClicked(View view) {
+        bundle = new Bundle();
+        switch (view.getId()) {
+            case R.id.tvDistrictResult:
+                intent = new Intent(this, AddDistricrActivity.class);
+                bundle.putDouble("lat", lat);
+                bundle.putDouble("lng", lng);
+                bundle.putFloat("redii", fenceRadius);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, CodeUtils.LOCATION_LIST);
+                break;
+
+            case R.id.butAddDistricrt:
+                intent = new Intent(this, AddDistricrActivity.class);
+                bundle.putDouble("lat", lat);
+                bundle.putDouble("lng", lng);
+                bundle.putFloat("redii", fenceRadius);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, CodeUtils.LOCATION_LIST);
+                break;
+        }
+    }
+
+    public void getFence() {
+        String PATH_RSA = "device_id=" + SPUtils.getPreference(this, "deviceid") + "&uid=" + SPUtils.getPreference(this, "uid") + "&token=" + SPUtils.getPreference(this, "token");
+        System.out.println("sos = " + PATH_RSA);
+        try {
+            PrivateKey privateKey = RSAUtils.loadPrivateKey(RSAUtils.PRIVATE_KEY);
+            byte[] encryptByte = RSAUtils.encryptDataPrivate(PATH_RSA.getBytes(), privateKey);
+            xUtilsGerFence(Base64Utils.encode(encryptByte).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void xUtilsGerFence(String sign) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("sign", sign);
+        HttpxUtils.Post(this,
+                HttpPath.DEVICE_GETFENCE,
+                map,
+                new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        System.out.println("获取围栏 = " + result);
+                        Fence fence = GsonUtil.gsonIntance().gsonToBean(result, Fence.class);
+                        if (fence.getStatus() == 1) {
+                            if (fence.getData().toString().equals("[]")) {
+                                butAddDistricrt.setVisibility(View.VISIBLE);
+                                tvDistrictResult.setVisibility(View.GONE);
+                            } else {
+                                butAddDistricrt.setVisibility(View.GONE);
+                                tvDistrictResult.setVisibility(View.VISIBLE);
+                                lat = Double.parseDouble(fence.getData().getPoint_lat());
+                                lng = Double.parseDouble(fence.getData().getPoint_lng());
+                                fenceRadius = Float.parseFloat(fence.getData().getRadii());
+
+                                tvDistrictResult.setText("安全区域" + fence.getData().getRadii() + "米");
+
+                                mAMap.clear();
+                                centerLatLng = new LatLng(lat, lng);
+                                setMyLocationStyle();
+
+                                addFence();
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
     }
 
     void init() {
@@ -153,18 +232,8 @@ public class DistrictActivity extends MyBaseActivity implements
             mAMap = mMapView.getMap();
             mAMap.getUiSettings().setRotateGesturesEnabled(false);
             mAMap.moveCamera(CameraUpdateFactory.zoomBy(6));
-            setUpMap();
+            setMyLocationStyle();
         }
-
-        btOption.setVisibility(View.VISIBLE);
-        btOption.setText("隐藏设置");
-        resetView_round();
-
-        btAddFence.setOnClickListener(this);
-        btOption.setOnClickListener(this);
-        cbAlertIn.setOnCheckedChangeListener(this);
-        cbAlertOut.setOnCheckedChangeListener(this);
-        cbAldertStated.setOnCheckedChangeListener(this);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(GEOFENCE_BROADCAST_ACTION);
@@ -192,7 +261,7 @@ public class DistrictActivity extends MyBaseActivity implements
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         // 自定义定位蓝点图标
         myLocationStyle.myLocationIcon(
-                BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher));
+                BitmapDescriptorFactory.fromResource(R.mipmap.ic_address));
         // 自定义精度范围的圆形边框颜色
         myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));
         // 自定义精度范围的圆形边框宽度
@@ -204,6 +273,27 @@ public class DistrictActivity extends MyBaseActivity implements
         mAMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         // 设置定位的类型为定位模式 ，可以由定位、跟随或地图根据面向方向旋转几种
         mAMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
+
+        mAMap.moveCamera(CameraUpdateFactory.zoomTo(16));//设置地图的缩放级别
+        mAMap.getUiSettings().setLogoBottomMargin(-50);//取消高德地图logo
+        mAMap.getUiSettings().setZoomControlsEnabled(false);//控制缩放控件的显示和隐藏。
+    }
+
+    public void setMyLocationStyle() {
+        //创建marker并定位到marker
+        centerLatLng = new LatLng(lat, lng);
+        mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, 19));
+        markerOption = new MarkerOptions();
+        markerOption.position(centerLatLng);
+        markerOption.visible(true);
+        ICON_YELLOW = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_address));
+        markerOption.icon(ICON_YELLOW);
+        mAMap.addMarker(markerOption);
+
+        mAMap.moveCamera(CameraUpdateFactory.zoomTo(16));//设置地图的缩放级别
+        mAMap.getUiSettings().setLogoBottomMargin(-50);//取消高德地图logo
+        mAMap.getUiSettings().setZoomControlsEnabled(false);//控制缩放控件的显示和隐藏。
+
     }
 
     /**
@@ -251,27 +341,6 @@ public class DistrictActivity extends MyBaseActivity implements
         }
         if (null != mlocationClient) {
             mlocationClient.onDestroy();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.bt_addFence:
-                addFence();
-                break;
-            case R.id.bt_option:
-                if (btOption.getText().toString()
-                        .equals("显示设置")) {
-                    lyOption.setVisibility(View.VISIBLE);
-                    btOption.setText("隐藏设置");
-                } else {
-                    lyOption.setVisibility(View.GONE);
-                    btOption.setText("显示设置");
-                }
-                break;
-            default:
-                break;
         }
     }
 
@@ -354,36 +423,6 @@ public class DistrictActivity extends MyBaseActivity implements
         }.start();
     }
 
-    Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("添加围栏成功");
-                    String customId = (String) msg.obj;
-                    if (!TextUtils.isEmpty(customId)) {
-                        sb.append("customId: ").append(customId);
-                    }
-                    Toast.makeText(getApplicationContext(), sb.toString(),
-                            Toast.LENGTH_SHORT).show();
-                    drawFence2Map();
-                    break;
-                case 1:
-                    int errorCode = msg.arg1;
-                    Toast.makeText(getApplicationContext(),
-                            "添加围栏失败 " + errorCode, Toast.LENGTH_SHORT).show();
-                    break;
-                case 2:
-                    String statusStr = (String) msg.obj;
-                    tvResult.setVisibility(View.VISIBLE);
-                    tvResult.append(statusStr + "\n");
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
     List<GeoFence> fenceList = new ArrayList<GeoFence>();
 
     @Override
@@ -394,11 +433,11 @@ public class DistrictActivity extends MyBaseActivity implements
             fenceList = geoFenceList;
             msg.obj = customId;
             msg.what = 0;
+            drawFence2Map();
         } else {
             msg.arg1 = errorCode;
             msg.what = 1;
         }
-        handler.sendMessage(msg);
     }
 
     /**
@@ -443,19 +482,15 @@ public class DistrictActivity extends MyBaseActivity implements
                 Message msg = Message.obtain();
                 msg.obj = str;
                 msg.what = 2;
-                handler.sendMessage(msg);
             }
         }
     };
 
     @Override
     public void onMapClick(LatLng latLng) {
-        markerOption.icon(ICON_YELLOW);
-        centerLatLng = latLng;
-        addCenterMarker(centerLatLng);
-        tvGuide.setBackgroundColor(getResources().getColor(R.color.text_color2));
-        tvGuide.setText("选中的坐标：" + centerLatLng.longitude + ","
-                + centerLatLng.latitude);
+//        markerOption.icon(ICON_YELLOW);
+//        centerLatLng = latLng;
+//        addCenterMarker(centerLatLng);
     }
 
     /**
@@ -465,14 +500,11 @@ public class DistrictActivity extends MyBaseActivity implements
     public void onLocationChanged(AMapLocation amapLocation) {
         if (mListener != null && amapLocation != null) {
             if (amapLocation != null && amapLocation.getErrorCode() == 0) {
-                tvResult.setVisibility(View.GONE);
                 mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
             } else {
                 String errText = "定位失败," + amapLocation.getErrorCode() + ": "
                         + amapLocation.getErrorInfo();
                 Log.e("AmapErr", errText);
-                tvResult.setVisibility(View.VISIBLE);
-                tvResult.setText(errText);
             }
         }
     }
@@ -534,48 +566,9 @@ public class DistrictActivity extends MyBaseActivity implements
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()) {
-            case R.id.cb_alertIn:
-                if (isChecked) {
-                    activatesAction |= GeoFenceClient.GEOFENCE_IN;
-                } else {
-                    activatesAction = activatesAction
-                            & (GeoFenceClient.GEOFENCE_OUT
-                            | GeoFenceClient.GEOFENCE_STAYED);
-                }
-                break;
-            case R.id.cb_alertOut:
-                if (isChecked) {
-                    activatesAction |= GeoFenceClient.GEOFENCE_OUT;
-                } else {
-                    activatesAction = activatesAction
-                            & (GeoFenceClient.GEOFENCE_IN
-                            | GeoFenceClient.GEOFENCE_STAYED);
-                }
-                break;
-            case R.id.cb_alertStated:
-                if (isChecked) {
-                    activatesAction |= GeoFenceClient.GEOFENCE_STAYED;
-                } else {
-                    activatesAction = activatesAction
-                            & (GeoFenceClient.GEOFENCE_IN
-                            | GeoFenceClient.GEOFENCE_OUT);
-                }
-                break;
-            default:
-                break;
-        }
         if (null != fenceClient) {
             fenceClient.setActivateAction(activatesAction);
         }
-    }
-
-    private void resetView_round() {
-        etRadius.setHint("围栏半径");
-        etRadius.setVisibility(View.VISIBLE);
-        tvGuide.setBackgroundColor(getResources().getColor(R.color.main_color));
-        tvGuide.setText("请点击地图选择围栏的中心点");
-        tvGuide.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -608,8 +601,17 @@ public class DistrictActivity extends MyBaseActivity implements
 //                centerLatLng.longitude);
 //        fenceRadius = Float.parseFloat(radiusStr);
 //        fenceClient.addGeoFence(centerPoint, fenceRadius, customId);
-        DPoint centerPoint = new DPoint(35.065287, 118.3212733);
-        fenceRadius = 500;
-        fenceClient.addGeoFence(centerPoint, fenceRadius, "测试围栏");
+        DPoint centerPoint = new DPoint(lat, lng);
+        fenceClient.addGeoFence(centerPoint, fenceRadius, "围栏");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CodeUtils.LOCATION_LIST) {
+            if (resultCode == CodeUtils.LOCATION_ADD) {
+                getFence();
+            }
+        }
     }
 }

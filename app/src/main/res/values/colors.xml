@@ -15,6 +15,12 @@
     <color name="bg2">#F1F1F1</color>
     <color name="bg3">#E9E9E9</color>
 
+    <color name="test">#80FFFFFF</color>
+
+    <color name="test1">#90FFFFFF</color>
+
     <color name="view_line">#EBEBEB</color>
+
+    <color name="bg_color">#F3F3F6</color>
 
 </resources>
